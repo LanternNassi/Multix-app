@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "725783399551",
+    "project_id": "multix-67a31",
+    "storage_bucket": "multix-67a31.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:725783399551:android:1e845c00014ea91c58c34a",
+        "android_client_info": {
+          "package_name": "com.lantern.Multix"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "725783399551-aqvsvhbtll61mltqe0kmmlrsgiv6kbut.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC8VzE9x-DhDLyllh9EwyvqWh-uroC-NS4"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "725783399551-aqvsvhbtll61mltqe0kmmlrsgiv6kbut.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
