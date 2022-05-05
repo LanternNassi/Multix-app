@@ -1,5 +1,5 @@
 import React, { Component  , useState , useEffect} from 'react'
-import {View , Text , StyleSheet , TouchableOpacity , ScrollView } from 'react-native'
+import {View , Text , StyleSheet , TouchableOpacity , ScrollView , Alert } from 'react-native'
 import {Avatar} from 'react-native-elements'
 import { ScreenHeight, ScreenWidth } from 'react-native-elements/dist/helpers'
 import FontAwesomeIcon from 'react-native-vector-icons/FontAwesome'
@@ -8,6 +8,8 @@ import { Sae , Fumi , Kohana , Hoshi } from 'react-native-textinput-effects'
 import SignInLogic from './SignInLogic.js'
 import axios from 'axios'
 import Spinner from 'react-native-loading-spinner-overlay'
+import OneSignal from 'react-native-onesignal';
+
 
 
 export function Sign_in(props){
@@ -46,7 +48,7 @@ export function Sign_in(props){
                         inputPadding={16}
                         inputStyle = {{ color : 'black' }}
                         onChangeText = { text => {
-                            setName(text)
+                            setName(text.trim())
                         } }
                        
                     />
@@ -68,10 +70,13 @@ export function Sign_in(props){
                   
                     <View style = {{ position : 'relative' , height : ScreenHeight * 0.2 , top : 50 , bottom : 0 }}>
                         <TouchableOpacity onPress = {
-                            async () => {
+                            () => {
                                setspin(true)
                                function navigate(processed_info){
-                                    console.log(processed_info)
+                                        // OneSignal.push(function() {
+                                        //     OneSignal.setExternalUserId(processed_info.Profile['Multix_token']);
+                                        //     OneSignal.setEmail(processed_info.Profile['Email']);
+                                        // });
                                     //Loading the profile into redux store for use 
                                     props.store_fun_profile({...processed_info.Profile , 'Server_id' : processed_info.Profile.id})
                                     //Loading the contacts into the redux for use
@@ -88,8 +93,13 @@ export function Sign_in(props){
                                    alert('Invalid credentials. Account doesnt exist...')
                                    setspin(false)
                                }
+                               function are_contacts_allowed(){
+                                   let will;
+                                   
+                                    return will
+                               }
 
-                               await SignInLogic.init(Name , Password , props.state.business.Debug , navigate , invalid)
+                               SignInLogic.init(Name , Password , props.state.business.Debug , navigate , invalid , are_contacts_allowed)
                             }
                         } style = {{ width : 180 , height : 42 , borderRadius :21  , backgroundColor : props.state.fun.Layout_Settings.Icons_Color, justifyContent : 'center' , alignItems : 'center'  }}>
                             <Text style = {{color : 'white'}}>Sign in </Text>

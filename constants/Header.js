@@ -4,7 +4,7 @@ import {View , Text , TextInput , Image , Button, StyleSheet , TouchableOpacity,
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons'
 import * as animatable from 'react-native-animatable';
 import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs';
-import { ScreenWidth } from 'react-native-elements/dist/helpers';
+import { ScreenWidth , ScreenHeight } from 'react-native-elements/dist/helpers';
 import Theme from './Theme.js';
 import {connect} from 'react-redux';
 import * as Sharing from 'expo-sharing'
@@ -50,7 +50,11 @@ export function Header(props){
                         <TouchableOpacity onPress = { ()=>  {}} >
                         <Avatar containerStyle = {{elevation : 4 , backgroundColor :  props.state.fun.Layout_Settings.Icons_surroundings}} rounded size = 'small' icon = {{ name : 'envelope' , color : props.state.fun.Layout_Settings.Icons_Color, type : 'font-awesome'  }} />
                         </TouchableOpacity>
-                        <TouchableOpacity style = {{...styles.pic , backgroundColor : props.state.fun.Connected ? ('green') : ('gold') }}>
+                        <TouchableOpacity onPress = {()=>{
+                            if(props.state.fun.Fun_profile.Profile_photo){
+                                props.state.business.navigation.navigation.navigate('Full View' , {'media_type' : 'Picture' , 'media' : props.state.fun.Fun_profile.Profile_photo})
+                            }
+                        }} style = {{...styles.pic , backgroundColor : props.state.fun.Connected ? ('green') : ('gold') }}>
                         <Avatar containerStyle = {{elevation : 4 , backgroundColor : props.state.fun.Layout_Settings.Icons_surroundings }} rounded  size = 'small' source = { props.state.fun.Fun_profile.Profile_photo ? ({uri : props.state.fun.Fun_profile.Profile_photo}) : require('../assets/Male_no_profile_pic.jpg') }/>          
                         </TouchableOpacity>
                     </View>
@@ -73,7 +77,7 @@ export default connect(mapStateToProps,mapDispatchToProps)(Header)
 const styles = StyleSheet.create({
     container : { 
         //backgroundColor : 'white',
-        height : 100,
+        height : 70,
         width : '100%',
         top : 0,
         elevation : 5,
@@ -84,7 +88,7 @@ const styles = StyleSheet.create({
         flexDirection : 'row',
         justifyContent : 'space-between',
         alignItems : 'center',
-        marginTop : 47
+        marginTop : 0.03 * ScreenHeight
         
     },
     pic : {

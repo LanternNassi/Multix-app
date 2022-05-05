@@ -51,7 +51,9 @@ export const Show_case = (props) => {
     } , [])
 
     return (
-        <ScrollView style = {styles.container}>
+        <ScrollView contentContainerStyle = {{
+            alignItems : 'center',
+        }} style = {styles.container}>
         <View style = {{ top : 20 , alignItems : 'center' , height : ScreenHeight * 0.9  }}>   
         <View style = {{ width : 0.9 * ScreenWidth, justifyContent : 'space-between' , alignItems : 'center', height : 0.14 * ScreenHeight  }}>
                 <Avatar rounded icon = {{ name : 'check' , size : 18 , type : 'font-awesome' }} containerStyle = {{
@@ -455,7 +457,6 @@ export default connect(mapStateToProps, mapDispatchToProps)(Show_case)
 const styles = StyleSheet.create({
     container : {
         flexDirection : 'column',
-        alignItems : 'center',
         flex : 1,
     },
     disclaimer : {

@@ -731,7 +731,7 @@ const styles = StyleSheet.create({
         flex : 1,
     },
     header : {
-        marginTop : 47,
+        marginTop : 20,
         flexDirection : 'row',
         justifyContent : 'space-around',
         alignItems : 'center',

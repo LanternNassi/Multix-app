@@ -25,7 +25,7 @@ export const Pdf = (props) => {
             }
         } >
             <View style = {styles.accesories}>
-                <Avatar rounded size = {'small'} icon = {{ name : 'music' , type : 'font-awesome'}} />
+                <Avatar rounded size = {'small'} icon = {{ color : props.state.fun.Layout_Settings.Icons_Color , name : 'music' , type : 'font-awesome'}} />
                 <Text>
                     { props.file.split('/').pop() }
                 </Text>
@@ -47,12 +47,16 @@ export default connect(mapStateToProps, mapDispatchToProps)(Pdf)
 const styles = StyleSheet.create({
     container : {
         height : 0.1 * ScreenHeight ,
-        width : 0.4 * ScreenWidth,
-        justifyContent : 'center',
+        width : 0.3 * ScreenWidth,
+        flexDirection : 'row',
+        justifyContent : 'space-around',
         alignItems : 'center'
     },
     accesories : {
         height : 0.06 * ScreenHeight,
-        width : 0.3 * ScreenWidth,
+        width : 0.2 * ScreenWidth,
+        flexDirection : 'row',
+        justifyContent : 'space-around',
+        alignItems : 'center'
     }
 })

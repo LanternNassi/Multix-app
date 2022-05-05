@@ -69,7 +69,7 @@ export const Selling = (props) => {
                             onChangeText = {text => {
                                 setDescription(text)
                             }}
-                            label = {'Say something about your specifications '}
+                            label = {'Whats your say?'}
                             
                             iconClass={FontAwesomeIcon}
                             iconName={'user'}
@@ -92,7 +92,7 @@ export const Selling = (props) => {
                             info['gig_id'] = gig['Gig_id']
                             //info['Account_id_of_customer'] = gig['Account_id']
                             info['Extra_info'] = Description
-                            info['Approved'] = false
+                            info['Approved'] = 'false'
                             info_submit['info'] = info
                             submit(info_submit)
 
@@ -150,6 +150,9 @@ export const Selling = (props) => {
                         </View>
                     </View>
                     <TouchableOpacity
+                    onPress = {()=>{
+                        props.state.navigation.navigation.navigate('Account Profile' , gig.Account_id)
+                    }}
                      style = {{...styles.proceed_btn , backgroundColor : props.state.theme.icons_surrounding}}>
                          <Text style = {{color : 'white'  }}> Proceed to profile </Text>
                     </TouchableOpacity>

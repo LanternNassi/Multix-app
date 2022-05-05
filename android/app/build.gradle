@@ -146,8 +146,8 @@ android {
         applicationId 'com.lantern.Multix'
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
-        versionCode 2
-        versionName "1.0.1"
+        versionCode 9
+        versionName "1.0.7"
     }
     splits {
         abi {

@@ -1,5 +1,5 @@
 import React, { Component , useState , useEffect} from 'react'
-import { View , Text , ScrollView , FlatList , TouchableOpacity , StyleSheet }  from 'react-native'
+import { View , Text , ScrollView , FlatList , TouchableOpacity , StyleSheet, BackHandler }  from 'react-native'
 import { Avatar , Card , CheckBox} from 'react-native-elements' 
 import { connect } from 'react-redux'
 import { ScreenHeight, ScreenWidth } from 'react-native-elements/dist/helpers';
@@ -37,6 +37,17 @@ export function Gig_account (props) {
         const [info , setinfo] = useState(
             match_gig()
         )
+
+        function handleBackButton(){
+            props.state.navigation.navigation.navigate('Business Profile')
+        }
+
+        useEffect(()=>{
+            BackHandler.addEventListener('hardwareBackPress' , handleBackButton)
+            return () => {
+                BackHandler.removeEventListener('hardwareBackPress' , handleBackButton)
+            }
+        },[])
         
         const get_proposals = () => {
             let final_list = []
@@ -680,7 +691,7 @@ export function Gig_account (props) {
                 <View style = { styles.extra_info }>
                         <View style = {{
                             width : 0.98 * ScreenWidth,
-                            maxHeight : 0.3 * ScreenHeight,
+                            maxHeight : 0.35 * ScreenHeight,
                             flexDirection : 'row',
                             justifyContent : 'space-between',
                             alignItems : 'center',
@@ -1016,7 +1027,7 @@ const styles = StyleSheet.create({
         flexDirection : 'column',
         justifyContent : 'space-around',
         alignItems : 'flex-start',
-        maxHeight : 1.2 *  ScreenHeight,
+        maxHeight : 1.3 *  ScreenHeight,
         //position : 'relative',
         //top : 0.15 * ScreenWidth,
         //bottom : 0.1 * ScreenWidth,
@@ -1028,7 +1039,7 @@ const styles = StyleSheet.create({
         paddingBottom : 6,
         paddingLeft : 10,
         paddingRight : 10,
-        paddingTop : 6,
+        // paddingTop : 6,
         backgroundColor : 'rgba(0,40,0,0.1)',
         borderRadius : 20,
         top : 0.038 * ScreenWidth,

@@ -4,6 +4,7 @@ import axios from 'axios'
 import * as FileSystem from 'expo-file-system';
 import * as mime from 'react-native-mime-types'
 import * as MediaLibrary from 'expo-media-library'
+import {Buffer} from 'buffer'
 
 
 export class fun_database {
@@ -60,12 +61,13 @@ export class fun_database {
             info['forwarded'],
             info['Starred'],
             info['Replied'],
-            info['Type']
+            info['Type'],
+            info['Muk'],
        ]
 
        const db = SQLite.openDatabase('Fun_database.db')
        db.transaction((tx)=>{
-           tx.executeSql('INSERT INTO Messages (Contact , Message , Status , Date , Receiving , Server_id , forwarded , Starred , Replied, Type) VALUES (?,?,?,?,?,?,?,?,?,?)',
+           tx.executeSql('INSERT INTO Messages (Contact , Message , Status , Date , Receiving , Server_id , forwarded , Starred , Replied, Type, Muk) VALUES (?,?,?,?,?,?,?,?,?,?,?)',
            [...final]
            ,(tx,Result)=>{
            },(error)=>{
@@ -121,6 +123,7 @@ export class fun_database {
             fields: [Contacts.Fields.PhoneNumbers],
           });
           let official_numbers = []
+        //   console.log(data.length , "From contact list 1")
           if (data.length>0){
               for(let i=0; i<data.length; i++){
                   try {
@@ -141,7 +144,10 @@ export class fun_database {
                         }
                         
                     }
-                   
+                    // console.log(number.join(''))
+                    // let buffer = Buffer.from(number.join(''))
+                    // let Base64String = buffer.toString('base64')
+                    // official_numbers.push(Base64String)
                     official_numbers.push(number.join(''))
                    
                   } catch (error) {
@@ -149,8 +155,9 @@ export class fun_database {
               }
              
           }
+        //   console.log(official_numbers)
+     
           return official_numbers
-
     }
     }
 
@@ -198,7 +205,7 @@ static validate_numbers(official_numbers , token , Debug){
     let matched_data = []
     axios({
         method : 'POST',
-        url : Debug ? ('http://192.168.43.232:8040/Check_contact_list') : ('http://multix-fun.herokuapp.com/Check_contact_list'),
+        url : Debug ? ('http://192.168.43.232:8040/Check_contact_list') : ('https://multix-fun.herokuapp.com/Check_contact_list'),
         data : {'Contacts' : official_numbers},
         headers : { 
           'content-type' : 'application/json',
@@ -306,18 +313,42 @@ static update_db_connes(server_list , database_list){
     }
 }
 
+static async insert_chats_connes(chat){
+    const db = SQLite.openDatabase('Fun_database.db')
+    db.transaction((tx)=>{
+        tx.executeSql('INSERT INTO Chats_contacts (Name , Contact , Server_id) VALUES (?,?,?)' , [chat.Name , chat.Contact , chat.Server_id],(tx , Result_set)=>{
+
+        },(error)=>{})
+    },(error)=>{},()=>{})
+}
+
 static async store_received_media(url , type){ 
     const fun_media = FileSystem.documentDirectory + 'Multix fun/Received/' + ('Multix '+type) + ' /'
     const fun_media_info = await FileSystem.getInfoAsync(fun_media)
     if (fun_media_info.exists){
         let file_uri = await FileSystem.downloadAsync(url , fun_media + url.split('/').pop() )
-        await MediaLibrary.createAssetAsync(file_uri)
+        // await MediaLibrary.createAssetAsync(file_uri)
     } else {
         await FileSystem.makeDirectoryAsync(fun_media , { intermediates : true })
         let file_uri = await FileSystem.downloadAsync(url , fun_media + url.split('/').pop() )
-        await MediaLibrary.createAssetAsync(file_uri)
+        // await MediaLibrary.createAssetAsync(file_uri)
     }
     return fun_media + url.split('/').pop()
+}
+
+static async update_message_progress(Muk , progress){
+    const db = SQLite.openDatabase('Fun_database.db')
+    db.transaction((tx)=>{
+        tx.executeSql('UPDATE Messages SET Status=? WHERE Muk=?',
+        [progress , Muk],(tx,result)=>{},(error)=>{})
+    },(error)=>{},()=>{})
+}
+
+static async update_seen_status_message(Muk){
+    const db = SQLite.openDatabase('Fun_database.db')
+    db.transaction((tx)=>{
+        tx.executeSql('UPDATE Messages SET Seen=? WHERE Muk=?' , [true , Muk])
+    },(error)=>{},()=>{})
 }
 
 static async store_sent_message(file){

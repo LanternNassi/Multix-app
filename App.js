@@ -1,6 +1,6 @@
 import { registerRootComponent } from 'expo';
 import React from 'react';
-import { StyleSheet, Text, View, ScrollView , FlatList , Image, Button} from 'react-native';
+import { StyleSheet, Text, View, ScrollView , FlatList , Image, Button , Alert} from 'react-native';
 import { Card, ListItem, Icon, BottomSheet } from 'react-native-elements';
 import {connect} from 'react-redux';
 import {bindActionCreators} from 'redux'
@@ -15,7 +15,7 @@ import * as Notifications from 'expo-notifications'
 import  notify from './websockets/Notifications.js' 
 import fun_database from './redux/Database_fun_transactions.js'
 import OneSignal from 'react-native-onesignal';
- 
+
 
 
 export class App extends React.Component {
@@ -48,43 +48,54 @@ export class App extends React.Component {
 
   async api_calls(contacts,chats_contacts,token) {
     await axios({
-      method : 'POST',
-      url : (this.props.state.Debug) ? ('http://192.168.43.232:8040/Check_contact_list') : ('https://multix-fun.herokuapp.com/Check_contact_list'),
-      data : {'Contacts' : contacts},
+      method : 'GET',
+      url : (this.props.state.Debug) ? ('http://192.168.43.232:8040/Scan_chats/') : ('https://multix-fun.herokuapp.com/Scan_chats/'),
+      data : {},
       // timeout : 1000000,
       headers : { 
         'content-type' : 'application/json',
         'Authorization': 'Token ' +  token ,
     }
-  }).then(async(response) => {
+  }).then((response) => {
       if (response.status === 200){
+        // console.log(response.data)
           this.setState({notopen : false})
           let resp = response.data
-          this.props.store_fun_contacts_redux(resp)
+          let friends = []
+          for(let i = 0; i<contacts.length; i++){
+            for(let p = 0; p<resp.length; p++){
+              if(contacts[i] == resp[p].Contact){
+                // this.props.update_contacts(resp[p])
+                if(resp[p]){
+                  friends.push(resp[p])
+                }
+              }
+            }
+          }
+          // console.log(friends)
+          this.props.store_fun_contacts_redux(friends)
           this.props.store_online_chats({})
           //setTimeout(()=>{
           //await this.update_db_connes(resp , chats_contacts)
           //},3000)
           
-          // axios({
-          //   method : 'POST',
-          //   url : 'https://multix-fun.herokuapp.com/Get_online_chats',
-          //   data : {'connected_chats' : response.data},
-          //   timeout : 100000,
-          //   headers : { 
-          //     'content-type' : 'application/json',
+          axios({
+            method : 'POST',
+            url : (this.props.state.Debug) ? ('http://192.168.43.232:8040/Update_friends') : ('https://multix-fun.herokuapp.com/Update_friends'),
+            data : {'friends' : friends},
+            // timeout : 100000,
+            headers : { 
+              'content-type' : 'application/json',
+              'Authorization': 'Token ' +  token ,
+          }
+          }).then(async(response_online)=>{
+            if (response_online.status == 202){
+              // let matched_data = fun_database.online_chats(response_online.data , response.data)
+              // this.props.store_online_chats(matched_data)
+            }
+          },()=>{
 
-          // }
-          // }).then(async(response_online)=>{
-          //   if (response_online.status == 200){
-             
-          //     let matched_data = fun_database.online_chats(response_online.data , response.data)
-          //     this.props.store_online_chats(matched_data)
-          //   }
-          // },()=>{
-          //   //console.log('here for chats')
-          //   this.props.store_online_chats({})
-          // })
+          })
       }
   } , ()=>{
           //tx.executeSql('SELECT * FROM Chats_contacts',[],(tx , Result_set)=>{
@@ -124,7 +135,6 @@ export class App extends React.Component {
     },(error)=>{console.log(error)})
       tx.executeSql('SELECT * FROM Account WHERE id = 1',[],(tx,result)=>{
         if (result.rows.length > 0){
-
           fun_database.get_contacts_list().then(async (contacts)=>{
             //console.log(contacts)
             await this.api_calls(contacts,chats_contacts,result.rows.item(0)['Multix_token'])
@@ -151,7 +161,7 @@ export class App extends React.Component {
             if (Result_set.rows.length > 0){ 
               this.props.store_fun_profile_redux(Result_set.rows.item(0))
               let saved_contacts = []
-              tx.executeSql('SELECT * FROM Chats_contacts',[],(tx,result)=>{saved_contacts = result.rows._array},(error)=>{console.log('error')})
+              tx.executeSql('SELECT * FROM Chats_contacts',[],(tx,result)=>{ saved_contacts = result.rows._array},(error)=>{console.log('error')})
               tx.executeSql('SELECT * FROM Messages' , [] , (tx , Result)=>{
                 if (Result.rows.length > 0){
                  
@@ -172,7 +182,7 @@ export class App extends React.Component {
                     let item = reversed_messages[i]
                     //Checking if the index is recorded in the index_holder or not 
                     if(index_holder[item.Server_id] === 0 || index_holder[item.Server_id]){
-                      //If the index is already recorded in the database then jhus push the message in the list 
+                      //If the index is already recorded in the indexholder list then jhus push the message in the list 
                       messages[index_holder[item.Server_id]]['Messages'].push({
                         'id' : item.id , 
                         'Contact' : item.Contact , 
@@ -185,12 +195,14 @@ export class App extends React.Component {
                         'Starred' : item.Starred,
                         'Replied' : item.Replied,
                         'Type' : item.Type,
+                        'Muk' : item.Muk,
+                        'Seen' : item.Seen,
                       })
                     } else {
                       //If the index doesnot exist in the index holder then declare it as a dictionary and record its index in the index holder
                       index_holder[item.Server_id] = current_free_index 
                       messages[current_free_index] = {}
-                      //messages[current_free_index]['Name'] = item.Name
+                      // messages[current_free_index]['Name'] = item.Name
                       messages[current_free_index]['Server_id'] = item.Server_id
                       messages[current_free_index]['Contact_name'] = this.connect_phone_to_name(phone_names,item.Contact)
                       messages[current_free_index]['Name'] = item.Contact
@@ -215,6 +227,8 @@ export class App extends React.Component {
                         'Starred' : item.Starred,
                         'Replied' : item.Replied,
                         'Type' : item.Type,
+                        'Muk' : item.Muk,
+                        'Seen' : item.Seen,
                       })
                       positions.push({
                         'Server_id' : item.Server_id,
@@ -240,7 +254,7 @@ export class App extends React.Component {
               } )
             }else {
               //console.log('Coming')
-                this.props.navigation.navigate('Welcome to Multix')
+              this.props.navigation.navigate('Terms And Conditions')
             }
         },(error) => {console.log(error)})
     }, (error)=>{},()=>{})
@@ -282,7 +296,6 @@ export class App extends React.Component {
       OneSignal.setNotificationWillShowInForegroundHandler(notificationReceivedEvent => {
         console.log("OneSignal: notification will show in foreground:", notificationReceivedEvent);
         let notification = notificationReceivedEvent.getNotification();
-        console.log("notification: ", notification);
         const data = notification.additionalData
         console.log("additionalData: ", data);
         // Complete with null means don't show a notification.
@@ -336,16 +349,14 @@ export class App extends React.Component {
  */
 async downloadAssets(){
   const dir = await FileSystem.getInfoAsync(FileSystem.documentDirectory + 'SQLite/')
+  const fun_dir = await FileSystem.getInfoAsync(FileSystem.documentDirectory + 'SQLite/Business_database.db' )
   let business_db = false
   let fun_db = false
-  if (!dir.exists){
-        alert('This is the first relese of the Multix app . The Multix engineering team would like to welcome you and hope to help them make Multix a better app through providing feedback in the settings section about some of the glitches found in the app , the new features you would like them to include ...etc   ')
-        console.log('Folder doesnt exist . Creating one ...')
+  if (!dir.exists ){
         await FileSystem.makeDirectoryAsync(FileSystem.documentDirectory + 'SQLite/' )
 
         // Downloading the business database 
       await FileSystem.downloadAsync(this.props.state.Debug ? ('http://192.168.43.232:8080/Business_database.db') : ('https://mulapp.s3.eu-west-2.amazonaws.com/Multix+databases/Business_database.db'), FileSystem.documentDirectory + 'SQLite/Business_database.db').then((result) => {
-        console.log(result)
         business_db = true
       }).catch((error) => {
         alert( 'Please connect to the internet seems something is wrong with your connection')
@@ -353,7 +364,6 @@ async downloadAssets(){
 
       // Downloading the fun database
       await FileSystem.downloadAsync(this.props.state.Debug ? ('http://192.168.43.232:8080/Fun_database.db') : ('https://mulapp.s3.eu-west-2.amazonaws.com/Multix+databases/Fun_database.db'), FileSystem.documentDirectory + 'SQLite/Fun_database.db').then((result) => {
-        console.log(result)
         fun_db = true
       }).catch((error) => {
         //alert( 'Please connect to the internet seems something is wrong with your connection')
@@ -363,11 +373,30 @@ async downloadAssets(){
           await this.performAPICalls();
           await this.prepareResources();
         }
-  } else if (dir.exists) {
+  } else if (dir.exists && fun_dir.exists) {
     //If dir exists meaning that the databases already exist 
         //console.log('Folder exists . Proceeding...')
         await this.performAPICalls();
         await this.prepareResources();
+  } else if (dir.exists && !fun_dir.exists){
+       // Downloading the business database 
+       await FileSystem.downloadAsync(this.props.state.Debug ? ('http://192.168.43.232:8080/Business_database.db') : ('https://mulapp.s3.eu-west-2.amazonaws.com/Multix+databases/Business_database.db'), FileSystem.documentDirectory + 'SQLite/Business_database.db').then((result) => {
+        business_db = true
+      }).catch((error) => {
+        alert( 'Please connect to the internet seems something is wrong with your connection')
+      })
+
+      // Downloading the fun database
+      await FileSystem.downloadAsync(this.props.state.Debug ? ('http://192.168.43.232:8080/Fun_database.db') : ('https://mulapp.s3.eu-west-2.amazonaws.com/Multix+databases/Fun_database.db'), FileSystem.documentDirectory + 'SQLite/Fun_database.db').then((result) => {
+        fun_db = true
+      }).catch((error) => {
+        //alert( 'Please connect to the internet seems something is wrong with your connection')
+        //this.props.navigation.goBack()
+        })
+        if (fun_db && business_db) {
+          await this.performAPICalls();
+          await this.prepareResources();
+        }
   } 
   //console.log("done preparing local databases ....")
 
@@ -375,6 +404,9 @@ async downloadAssets(){
 
 
   render() {
+    if (this.props.fun.app_started && this.props.fun.Fun_profile){
+      this.props.navigation.navigate('Multix')
+    } 
       return (
         <View style={styles.container}>
         <Avatar rounded  size = {'xlarge'}  source = {require('./assets/Notifications.png')} />
@@ -402,7 +434,8 @@ let mapDispatchToProps = (dispatch) => ({
   store_positions_redux : (Positions) => dispatch({type : 'chats_positions' , list : Positions}),
   store_fun_contacts_redux : (contacts) => dispatch({ type : 'store_active_contacts' , Contacts : contacts }),
   store_online_chats : (online_chats) => dispatch({ type : 'online_chats' , Online_chats : online_chats }),
-  store_Layout_settings : (content) => dispatch({type : 'Layout_Settings' , content : content})
+  store_Layout_settings : (content) => dispatch({type : 'Layout_Settings' , content : content}),
+  update_contacts : (chat_data) => dispatch({type : 'update_active_contacts' , chat_data : chat_data}),
 })
 
 

@@ -34,31 +34,65 @@ export class Chats_container extends Component {
     }
 
     determine_message = (message) => {
+        let icon = ''
+        if (message.Status == 'failed'){
+            icon = 'history'
+        } else if (message.Status == 'sent'){
+            icon = 'bolt'
+        } else if (message.Status == 'deliverd'){
+            icon = 'check'
+        }
         if (message.Type === 'text'){
-            return message.Message
-            //return (message.Message.length > 26 ? (message.Message.slice(0,26) + "...") : (message.Message))
+            // return message.Message
+            return (
+                <View style = {{
+                    flexDirection : 'row',
+                    justifyContent : 'space-around',
+                    alignItems : 'center'
+                }}>
+                    <Avatar rounded size = {'small'} icon = {{ name : icon, type : 'font-awesome', size : 15 , color : 'black' }} />
+                    <Text style = {{
+                        fontWeight : message.Seen ? ('normal') : ('bold')
+                    }}>{message.Message.length > 26 ? (message.Message.slice(0,26) + "...") : (message.Message)}</Text>
+                </View>
+            )
         } else if (message.Type === 'image') {
             return (
                 <View style = {styles.category }>
-                     <Avatar rounded size = {'small'} icon = {{ name : 'file-photo-o', type : 'font-awesome', size : 15 , color : 'black' }} />
-                     <Text> {message.Type} </Text>
+                     <Avatar rounded size = {'small'} icon = {{ name : icon, type : 'font-awesome', size : 15 , color : 'black' }} />
+                     <Avatar rounded size = {'small'} icon = {{ name : 'file-photo-o', type : 'font-awesome', size : message.Seen ? (15) : (16.5) , color : 'black' }} />
+                     <Text style = {{
+                        fontWeight : message.Seen ? ('normal') : ('bold')
+                     }} > {message.Type} </Text>
                 </View>
              )
         } else if (message.Type === 'video'){
             return (
                 <View style = {styles.category }>
-                <Avatar rounded size = {'small'} icon = {{ name : 'file-video-o', type : 'font-awesome', size : 15 , color :'black' }} />
-                <Text> {message.Type} </Text>
+                <Avatar rounded size = {'small'} icon = {{ name : icon, type : 'font-awesome', size : 15 , color : 'black' }} />
+                <Avatar rounded size = {'small'} icon = {{ name : 'file-video-o', type : 'font-awesome', size : message.Seen ? (15) : (16.5) , color :'black' }} />
+                <Text style = {{
+                    fontWeight : message.Seen ? ('normal') : ('bold')
+                }} > {message.Type} </Text>
             </View>
             )
            
         }
     }
 
-    get_name = (Server_id) => {
-        for (let i =0; i<this.state.chats_name.length; i++){
-            if (Server_id == this.state.chats_name[i].Server_id){
-                return this.state.chats_name[i].Name
+    // get_name = (Server_id) => {
+    //     for (let i =0; i<this.state.chats_name.length; i++){
+    //         if (Server_id == this.state.chats_name[i].Server_id){
+    //             return this.state.chats_name[i].Name
+    //         }
+    //     }
+    //     return false
+    // }
+
+    get_name = (Server_id) =>{
+        for(let i =0; i<this.props.state.fun.Messages.length; i++){
+            if(this.props.state.fun.Messages[i].Server_id == Server_id){
+                return this.props.state.fun.Messages[i].Name
             }
         }
         return false
@@ -82,7 +116,7 @@ export class Chats_container extends Component {
                         <Image style = {{
                             height : 0.6 * ScreenHeight,
                             width : ScreenWidth,
-                            opacity : 0.3
+                            opacity : 0.1
                         }} source = {require('../assets/no-search-result.png')}/>
                         </View>
                     )
@@ -109,10 +143,13 @@ export class Chats_container extends Component {
                                             {key : 'pic ' , height : 50 , width : 50 , borderRadius : 25} ,
                                             {key : 'title' , left : 10, height : 10 , width : 110},
                                         ]} >
-                                            <View>
+                                            <TouchableOpacity onPress = {()=>{
+                                                console.log('pressed')
+                                            }}>
                                             { this.props.state.fun.Contacts && thumbnail ? (
                                                 <View>
-                                                <Avatar  source = {{ uri : thumbnail }} rounded size = {'medium'}/>
+                                                
+                                                <Avatar  source = {{ uri : thumbnail }} rounded size = {'medium'} />
                                                 {
                                                     this.props.state.fun.Online_chats ? (
                                                         (this.props.state.fun.Online_chats[chat.Name]) ? (
@@ -129,9 +166,9 @@ export class Chats_container extends Component {
                                             )
                                             }
                                                 
-                                            </View>
+                                            </TouchableOpacity>
                                             <View style = {{ marginLeft : 10, }}>
-                                                <ListItem.Title key = {'title'} style = {{ fontWeight : 'Bold' }}>
+                                                <ListItem.Title key = {'title'} style = {{ fontWeight : 'bold' }}>
                                                 {chat.Name}
                                                 </ListItem.Title>
                                                 <ListItem.Subtitle key ={'subtitle'}>
@@ -146,9 +183,20 @@ export class Chats_container extends Component {
                                         justifyContent : 'space-between'
                                      }} >
                                     <ListItem.Chevron/>
-                                    <Text>
-                                        {chat.Contact_name.length > 10 ? (chat.Contact_name.slice(0,10) + '...') : (chat.Contact_name) }
-                                    </Text>
+                                    {
+                                        this.props.state.fun.Typing[chat.Name] ? (
+                                            <Text style = {{
+                                                fontStyle : 'italic'
+                                            }}>
+                                                Typing ...
+                                            </Text>
+                                        ) : (
+                                            <Text>
+                                            @{chat.Contact_name.length > 10 ? (chat.Contact_name.slice(0,10) + '...') : (chat.Contact_name) }
+                                        </Text>
+                                        )
+                                    }
+                                   
                                     </View>
                                     
                             </ListItem.Swipeable> 

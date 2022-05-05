@@ -1,4 +1,5 @@
 import * as SQLite from 'expo-sqlite'
+import {Alert} from 'react-native'
 import axios from 'axios'
 import * as Contacts from 'expo-contacts';
 import FormData, {getHeaders} from 'form-data'
@@ -17,7 +18,7 @@ export class fun_sign_up {
     constructor(info , profile_picture,Debug){
         this.info = info
         this.network_pic = profile_picture
-        this.profile_picture = this.storing_profile_pic_to_folder(profile_picture.uri)
+        this.profile_picture = profile_picture
         this.Debug = Debug 
     }
   
@@ -38,10 +39,11 @@ export class fun_sign_up {
        
     }
 
-    insert_to_db(db_info){
+    async insert_to_db(db_info){
+      // let new_profile_pic_uri = await this.storing_profile_pic_to_folder(this.profile_picture)
         let data = [
             db_info.Name , db_info.Password , db_info.Contact , db_info.Email , 
-            db_info.Birth_date , db_info.Sign_up_date , db_info.Nickname , this.profile_picture,
+            db_info.Birth_date , db_info.Sign_up_date , db_info.Nickname , this.profile_picture.uri,
             db_info.Hobby , db_info.Residence , db_info.Notifications_token , db_info.Multix_token , db_info.id
         ]
         console.log(data)
@@ -49,14 +51,17 @@ export class fun_sign_up {
         db.transaction((tx)=>{
             tx.executeSql('INSERT INTO Account (Name , Password , Contact , Email , Birth_date , Sign_up_date , Nickname , Profile_photo , Hobby  , Residence , Notifications_token , Multix_token , Server_id) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?)' ,
              [...data],(tx , Result_set) => {
+                 console.log("Inserted")
                 if (Result_set.rowsAffected > 0) {
                    console.log('Inserted successfully')
                 }
             } , (error) => {
                 console.log('Error about inserting into profile')
             })
-        },(error) =>{} , () => {})
+        },(error) =>{console.log(error)} , () => {})
     }
+
+  
 
     async insert_contacts_to_db(Contacts){
         const db = SQLite.openDatabase('Fun_database.db')
@@ -77,28 +82,76 @@ export class fun_sign_up {
 
 
     async update_contacts(token , navigator , profile){
-        let official_numbers = await fun_database.get_contacts_list()
-        axios({
-            method : 'POST',
-            url : this.Debug ? ('http://192.168.43.232:8040/Check_contact_list') : ('http://multix-fun.herokuapp.com/Check_contact_list'),
-            data : {'Contacts' : official_numbers},
-            headers : { 
-              'content-type' : 'application/json',
-              'Authorization': 'Token ' + token ,
-          }
-        }).then(async (response) => {
-            if (response.status === 200){
-                console.log(response.data)
-                await this.insert_contacts_to_db(response.data)
-                navigator(
-                  {
-                      ...profile,
-                      'Server_id' : profile.Profile.id,
-                      'Contacts' : response.data,
+      Alert.alert('Demo Version',
+      'This is the first release of the Multix app . The Multix engineering team would like to welcome you and hope to help them make Multix a better app through providing feedback in the settings section about some of the glitches found in the app , the new features you would like them to include ...etc',
+      [
+          {text : 'Allow' , onPress : async ()=>{
+              let official_numbers =  await fun_database.get_contacts_list()
+              axios({
+                  method : 'GET',
+                  url : this.Debug ? ('http://192.168.43.232:8040/Scan_chats/') : ('http://multix-fun.herokuapp.com/Scan_chats/'),
+                  data : {},
+                  headers : { 
+                    'content-type' : 'application/json',
+                    'Authorization': 'Token ' + token ,
+                }
+              }).then(async (response) => {
+                  if (response.status === 200){
+                      // console.log(response.data)
+                      let resp = response.data
+                      let friends = []
+                      for(let i = 0; i<official_numbers.length; i++){
+                        for(let p = 0; p<resp.length; p++){
+                          if(official_numbers[i] == resp[p].Contact){
+                            // this.props.update_contacts(resp[p])
+                            if(resp[p]){
+                              friends.push(resp[p])
+                            }
+                          }
+                        }
+                      }
+                      axios({
+                        method : 'POST',
+                        url : (this.Debug) ? ('http://192.168.43.232:8040/Update_friends') : ('https://multix-fun.herokuapp.com/Update_friends'),
+                        data : {'friends' : friends},
+                        // timeout : 100000,
+                        headers : { 
+                          'content-type' : 'application/json',
+                          'Authorization': 'Token ' +  token ,
+                      }
+                      }).then(async(response_online)=>{
+                        if (response_online.status == 202){
+                            console.log('contacts matched correctly')
+                          // let matched_data = fun_database.online_chats(response_online.data , response.data)
+                          // this.props.store_online_chats(matched_data)
+                        }
+                      },()=>{
+            
+                      })
+                      await this.insert_contacts_to_db(friends)
+                      navigator(
+                        {
+                            'Profile' : {...profile},
+                            'Contacts' : friends,
+                        }
+                      )
                   }
-                )
-            }
-        })
+              })
+          }},
+          {text : 'Disagree' , onPress : async ()=>{
+              await this.insert_contacts_to_db([])
+              navigator(
+                {
+                    'Profile' : {...profile},
+                    'Contacts' : [],
+                }
+              )
+  
+          }}
+      ] , {
+          cancelable : false
+      })
+ 
     }
 
     async registerForPushNotificationsAsync() {
@@ -168,6 +221,7 @@ export class fun_sign_up {
   
     async sign_up(navigator){
         let notification_token = 'E0001'
+        console.log(this.Debug)
         axios({
             method : 'POST',
             url : this.Debug ? ('http://192.168.43.232:8040/SignUp') : ('http://multix-fun.herokuapp.com/SignUp') ,
@@ -191,7 +245,7 @@ export class fun_sign_up {
                             this.insert_to_db(response_1.data)
                             await this.initialize_onesignal()
                             await this.update_contacts(response_1.data['Multix_token'] , navigator , {
-                                'Profile' : {...response_1.data , 'Profile_photo' : this.network_pic.uri},
+                                'Profile' : {...response_1.data , 'Profile_photo' : this.profile_picture.uri},
                             })
                         }
                     })

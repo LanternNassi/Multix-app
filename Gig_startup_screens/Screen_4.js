@@ -1,5 +1,5 @@
 import React, { Component , useEffect , useState } from 'react'
-import { View , TextInput , Text , ScrollView , StyleSheet , TouchableOpacity, Picker, Dimensions } from 'react-native'
+import { View , TextInput , Text , ScrollView , StyleSheet , TouchableOpacity, Picker, Dimensions , BackHandler } from 'react-native'
 import { ScreenHeight, ScreenWidth } from 'react-native-elements/dist/helpers'
 import FontAwesomeIcon from 'react-native-vector-icons/FontAwesome'
 import { Avatar , Card , Icon } from 'react-native-elements'
@@ -98,13 +98,15 @@ export const Category = (props) => {
     } , [  ])
     return (
         <ScrollView>
-            <ScrollView style = {styles.container}>
+            <ScrollView contentContainerStyle = {{
+                
+            }} style = {styles.container}>
              <View style = {{ top : 20 , alignItems : 'center' }}>   
             <View style = {{ width : 0.9 * ScreenWidth, justifyContent : 'space-between' , alignItems : 'center' , height : 0.14 * ScreenHeight }}>
                 <Avatar rounded icon = {{ name : 'check' , size : 18 , type : 'font-awesome' }} containerStyle = {{
                     backgroundColor : 'green'
                 }} />
-                <Text style = {styles.disclaimer}>Please take a step to make your gig a stand out by carefully filling the steps</Text>
+                <Text style = {styles.disclaimer}>Please take a step to make your gig stand out by carefully filling the steps</Text>
             </View>
             <View style = {styles.input_container} >
             <Fumi

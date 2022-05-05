@@ -59,7 +59,7 @@ export function Welcome_Info(props) {
             <View style = {{ top : 20 , alignItems : 'center' }}>   
             <View style = {{ justifyContent : 'space-around' , alignItems : 'center'  }}>
                 <Avatar rounded containerStyle = {{ backgroundColor: props.fun.Layout_Settings.Icons_surroundings , elevation : 10 }} icon = {{ name : 'user-plus' , color : props.fun.Layout_Settings.Icons_Color , type : 'font-awesome' }} size = {'medium'} />
-                <Text style = {styles.disclaimer}>STEP 1 OF 8</Text>
+                <Text style = {styles.disclaimer}>STEP 1 OF 6</Text>
             </View>
             <View style = {styles.input_container} >
                 {

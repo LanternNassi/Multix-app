@@ -36,7 +36,7 @@ export function Screen_3(props) {
             <View style = {{ top : 20 , alignItems : 'center' , height : ScreenHeight * 0.9  }}>   
             <View style = {{ justifyContent : 'space-around' , alignItems : 'center'  }}>
                 <Avatar rounded containerStyle = {{ backgroundColor: props.fun.Layout_Settings.Icons_surroundings , elevation : 10 }} icon = {{ name : 'user-plus' , color : props.fun.Layout_Settings.Icons_Color , type : 'font-awesome' }} size = {'medium'} />
-                <Text style = {styles.disclaimer}>STEP 3 OF 8</Text>
+                <Text style = {styles.disclaimer}>STEP 3 OF 6</Text>
             </View>
             <View style = {styles.input_container} >
             <Fumi

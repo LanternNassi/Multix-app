@@ -56,6 +56,7 @@ import Chats_FAB from './components/Lets_connect_FAB_screens/Chats_FAB.js'
 import Layout from './tabs/Settings_screens/Layout.js'
 import Feedback from './tabs/Settings_screens/Feedback.js'
 import Privacy_policy from './tabs/Privacy_policy.js'
+import TermsAndConditions from './tabs/Terms_and_conditions.js'
 
 import Full_media_view from './components/Media_components/Full_media_view.js'
 
@@ -66,8 +67,14 @@ function Stackscreens(props) {
    return(
      
      <NavigationContainer>
-       <Stack.Navigator initialRouteName = "Welcome" >
-         <Stack.Screen name = "Welcome" component = {App} options={{headerShown :false}}/>
+       <Stack.Navigator initialRouteName = "Welcome" detachInactiveScreens = {true} >
+         {
+           !props.fun.app_started ? (
+            <Stack.Screen name = "Welcome" component = {App} options={{headerShown :false}}/>
+           ) : (
+             console.log()
+           )
+         }
          <Stack.Screen name = "Multix" component = {MyTabs} options = {{headerShown : false}}/>
            <Stack.Screen name = "Chat_screen"  component = {Chats_screen} options = {{  headerShown : true,
               headerPressColorAndroid : "black",
@@ -247,13 +254,41 @@ function Stackscreens(props) {
           {
             // Fun Screens sign up
           }
-            <Stack.Screen name = 'Personal info' component = {Fun_1} options = {{ headerShown : true }}/>
-            <Stack.Screen name = 'Email' component = {Fun_2} options = {{ headerShown : true }}/>
-            <Stack.Screen name = 'Birth date' component = {Fun_3} options = {{ headerShown : true }}/>
-            <Stack.Screen name = 'Profile picture' component = {Fun_4} options = {{ headerShown : true }}/>
-            <Stack.Screen name = 'Sign in' component = {Sign_in} options = {{ headerShown : true}} />
-            <Stack.Screen name = 'Welcome to Multix' component = {WelcomeFun} options = {{ headerShown : true }}/>
-
+          {
+            !props.fun.app_started ? (
+              <Stack.Screen name = 'Personal info' component = {Fun_1} options = {{ headerShown : true }}/>
+            ) : (console.log())
+          }
+          {
+            !props.fun.app_started ? (
+              <Stack.Screen name = 'Email' component = {Fun_2} options = {{ headerShown : true }}/>
+            ) : (console.log())
+          }
+          {
+            !props.fun.app_started ? (
+              <Stack.Screen name = 'Birth date' component = {Fun_3} options = {{ headerShown : true }}/>
+            ) : (console.log())
+          }
+          {
+            !props.fun.app_started ? (
+              <Stack.Screen name = 'Profile picture' component = {Fun_4} options = {{ headerShown : true }}/>
+            ) : (console.log())
+          }
+            {
+              !props.fun.app_started ? (
+                <Stack.Screen name = 'Sign in' component = {Sign_in} options = {{ headerShown : true}} />
+              ) : (console.log())
+            }
+            {
+              !props.fun.app_started ? (
+                <Stack.Screen name = 'Terms And Conditions' component = {TermsAndConditions} options = {{ headerShown : true}}/>
+              ) : (console.log())
+            }
+             {
+              !props.fun.app_started ? (
+                <Stack.Screen name = 'Welcome to Multix' component = {WelcomeFun} options = {{ headerShown : true }}/>
+              ) : (console.log())
+            }
           {
             // Fun FAB screens
           }

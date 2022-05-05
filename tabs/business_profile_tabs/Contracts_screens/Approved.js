@@ -32,7 +32,10 @@ export const Approved = (props) => {
                 <FlatList 
                 style = {styles.FlatList}
                 data = {props.state.business.Contracts_proposals}
-               
+                contentContainerStyle = {{
+                    justifyContent :'center',
+                    alignItems : 'center'
+                }}
                 ListEmptyComponent = {
                     ()=>(
                         <View style = {{
@@ -45,7 +48,7 @@ export const Approved = (props) => {
                         <Image style = {{
                             height : 0.5*ScreenHeight,
                          
-                            opacity : 0.3
+                            opacity : 0.1
                         }} source = {require('../../../assets/no-search-result.png')}/>
                         </View>
                     )
@@ -141,8 +144,7 @@ const styles = StyleSheet.create({
     },
     FlatList : {
         flex : 1,
-        justifyContent :'center',
-        alignItems : 'center'
+       
     },
     contract : {
         width : ScreenWidth,

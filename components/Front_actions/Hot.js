@@ -85,7 +85,7 @@ export const Hot = (props) => {
                     },
                     'contract_type_id' : response.data['Type_id_contract']
                 }
-                console.log(data)
+                // console.log(data)
                 props.state.ws_gig_notifications.sendMessage(data)
             }
         })
@@ -98,6 +98,7 @@ export const Hot = (props) => {
             data : {},
         }).then((response) => {
             if (response.status === 200){
+                console.log(response.data)
                 Setbidders(response.data)
                 SetIsReady(true)
             }
@@ -131,7 +132,7 @@ export const Hot = (props) => {
                                 const info = {}
                                 info['gig_id'] = status.Gig_id
                                 info['Bid_amount'] = bid
-                                info['Approved'] = false
+                                info['Approved'] = 'false'
                                 submit_bid(info)
                             }
                         }

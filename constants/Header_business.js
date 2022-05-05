@@ -82,7 +82,7 @@ export default connect(mapStateToProps,mapDispatchToProps)(Header_business)
 const styles = StyleSheet.create({
     container : { 
         //backgroundColor : 'white',
-        height : 100,
+        height : 80,
         width : '100%',
         top : 0,
         elevation : 0,
@@ -93,7 +93,7 @@ const styles = StyleSheet.create({
         flexDirection : 'row',
         justifyContent : 'space-between',
         alignItems : 'center',
-        marginTop : 47
+        marginTop : 20
         
     },
     pic : {

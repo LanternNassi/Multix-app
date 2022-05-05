@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import {View , Text , StyleSheet } from 'react-native';
+import {View , Text , StyleSheet, BackHandler } from 'react-native';
 import {Avatar , Card } from 'react-native-elements';
 import {connect} from 'react-redux';
 import {CirclesLoader} from 'react-native-indicator';
@@ -20,8 +20,18 @@ const Tab = createBottomTabNavigator();
 
 
 export class Business_account extends Component {
+  constructor(props){
+    super(props)
+    this.handleBackButtonClick = this.handleBackButtonClick.bind(this)
+    
+  }
     state = {
       open : false
+    }
+
+    handleBackButtonClick(){
+      this.props.state.navigation.navigation.navigate('Multix')
+      return true
     }
 
     fetch_resources = async() => {
@@ -47,6 +57,12 @@ export class Business_account extends Component {
     componentDidMount = async() =>{
       //await this.Intermediate()
       await this.fetch_resources()
+    }
+    componentWillMount(){
+      BackHandler.addEventListener('hardwareBackPress' , this.handleBackButtonClick)
+    }
+    componentWillUnmount(){
+      BackHandler.removeEventListener('hardwareBackPress' , this.handleBackButtonClick)
     }
    
     state = {

@@ -111,7 +111,12 @@ export class Chat_screen_settings extends Component {
                         <View style = {{...styles.profile_pic_layout , backgroundColor : this.props.fun.Layout_Settings.Icons_Color}}>
                             {
                                 profile_pic ? (
-                                    <Avatar source = {{ uri : profile_pic }} rounded size = {'xlarge'}  />
+                                    <TouchableOpacity onPress = {()=>{
+                                        this.props.state.navigation.navigation.navigate('Full View' , {'media_type' : 'Picture' , 'media' : profile_pic})
+
+                                    }}>
+                                        <Avatar source = {{ uri : profile_pic }} rounded size = {'xlarge'}  />
+                                    </TouchableOpacity>
                                 ) : (
                                     <Avatar containerStyle = {{ backgroundColor : color }} title = {Name.slice(0,2)} rounded size = {'xlarge'}  />
                                 )

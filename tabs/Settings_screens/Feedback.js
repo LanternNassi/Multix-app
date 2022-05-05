@@ -16,10 +16,11 @@ export const Feedback = (props) => {
 
     const submit = () => {
         if (type === 'Feedback'){
+            console.log(props.fun.Fun_profile['Multix_token'])
             axios({
                 method : 'POST',
                 url : props.business.Debug? ('http://192.168.43.232:8040/Feedback') : ('http://multix-fun.herokuapp.com/Feedback'),
-                data : feedback,
+                data : {'Message': feedback},
                 headers : {
                     'content-type' : 'application/json',
                     'Authorization': 'Token ' + props.fun.Fun_profile['Multix_token'],
@@ -28,18 +29,18 @@ export const Feedback = (props) => {
                 if (response.status === 207){
                     setspin(false)
                     alert('The Multix community is happy to hear from you..Thanks for your feedback')
-                    props.state.navigation.navigation.navigate('Multix')
+                    props.business.navigation.navigation.navigate('Multix')
                 } else {
                     setspin(false)
                     alert('A problem was encoutered. Please try again with your submission in 10 seconds.. Your Feedback is important to us..')
-                    props.state.navigation.navigation.navigate('Multix')
+                    props.business.navigation.navigation.navigate('Multix')
                 }
             })
         }else {
             axios({
                 method : 'POST',
                 url : props.business.Debug ? ('http://192.168.43.232:8040/Issues') : ('http://multix-fun.herokuapp.com/Issues'),
-                data : feedback,
+                data : {'Message' : feedback},
                 headers : {
                     'content-type' : 'application/json',
                     'Authorization': 'Token ' + props.fun.Fun_profile['Multix_token'] ,
@@ -48,11 +49,11 @@ export const Feedback = (props) => {
                 if (response.status === 207){
                     setspin(false)
                     alert('We are delighted by your continuous help to the Multix engineers in helping them transition the Multix app to better standards')
-                    props.state.navigation.navigation.navigate('Multix')
+                    props.business.navigation.navigation.navigate('Multix')
                 } else {
                     setspin(false)
                     alert('A problem was encoutered. Please try again in 20 seconds... Your Issues are our priorities.')
-                    props.state.navigation.navigation.navigate('Multix')
+                    props.business.navigation.navigation.navigate('Multix')
                 }
             })
 

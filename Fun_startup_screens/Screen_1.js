@@ -24,7 +24,7 @@ export const Fun_1 = (props) => {
             url : props.state.business.Debug ? ('http://192.168.43.232:8040/Verify_name') : ('http://multix-fun.herokuapp.com/Verify_name'),
             data : {'username' : Name}
         }).then((response)=>{
-            console.log(response)
+            // console.log(response)
             if (response.status === 200){
                 setName_error(false)
             } else if (response.status === 207){
@@ -131,7 +131,7 @@ export const Fun_1 = (props) => {
                     iconName={'eye-slash'}
                     iconColor={props.state.fun.Layout_Settings.Icons_Color}
                     iconSize={20}
-                    secureTextEntry = {true}
+                    secureTextEntry = {false}
                     iconWidth={40}
                     inputPadding={16}
                     inputStyle = {{ color : 'black' }}

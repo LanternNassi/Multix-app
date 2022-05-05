@@ -209,7 +209,7 @@ export  function Hot_deals(props) {
                                                props.state.navigation.navigation.navigate('Account Profile' , { id : item.item.Account_id })
                                            }
                                        }>
-                                           <Image source = {{uri : item.item.Profile_pic}} style = {{
+                                           <Image source = {{uri : item.item.Profile_pic ? (item.item.Profile_pic) : (require('../../assets/Notifications.png'))}} style = {{
                                                height : 40,
                                                width : 40,
                                                borderRadius : 20,

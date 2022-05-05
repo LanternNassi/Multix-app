@@ -1,4 +1,5 @@
 import React , {useState , useEffect} from 'react'
+import {BackHandler} from 'react-native'
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import Fun from './tabs/fun.js';
 import business from './tabs/business.js';
@@ -27,43 +28,9 @@ export function MyTabs(props) {
     setTimeout(()=>{
 
       function initialise(){
-        if (props.state.business.Business_profile['Account']){
-          let notifier = new Gig_notifications(props.state.business.Business_profile['Account']['Name'] , props.state.business.Debug)
-          notifier.onOpen((e)=>{
-            //console.log('opened')
-          })
-          notifier.onError((error)=>{
-            //console.log('error')
-            //console.log(error)
-            
-          })
-          notifier.onMessage((message)=>{
-            let data = JSON.parse(message.data)
-            //console.log(data)
-            Setbusiness_anime('')
-            Setbusiness_anime('slideInDown')
-            axios({
-              method : 'GET',
-              url : props.state.business.Debug ? ('http://192.168.43.232:8000/fetch_contracts_notifications_proposals/'):('http://multix-business.herokuapp.com/fetch_contracts_notifications_proposals/') ,
-              data : {},
-              headers : { 
-                'content-type' : 'application/json',
-                'Authorization': 'Token ' + props.state.business.Business_profile['Account']['Multix_token'] ,
-                
-            }
-            }).then((response)=>{
-              if (response.status === 200){
-                props.store_gig_notifications(response.data)
-              }
-            })
-          })
-          notifier.onClose((e)=>{
-            //console.log('closed')
-          })
-          props.start_gig_notifications(notifier)
-        } else {
-          //console.log('Didnt quite catch that')
-        }
+        //function to notify that the app has started
+        props.app_started()
+       
         // Setting and opening chat stream for fun server if the personnel is authenticated
         if( props.state.fun.Fun_profile['Name']){
   
@@ -75,6 +42,7 @@ export function MyTabs(props) {
               
               var message = JSON.parse(Message.data)
               if (message['type'] == 'Receive_Message'){
+                console.log(message)
                 if (props.state.fun.Fun_profile.Server_id !== message['From'] ){
                   Setfun_anime('')
                   Setfun_anime('slideInDown')
@@ -89,26 +57,30 @@ export function MyTabs(props) {
                                 'Message' : message['Message'],
                                 'Receiving' : true,
                                 'Date' : new Date().toString(),
-                                'status' : 'delivered',
+                                'Status' : 'delivered',
                                 'Contact' : message['Contact'],
                                 'Server_id' : message['From'],
                                 'forwarded' : message['forwarded'],
                                 'Starred' : false,
                                 'Replied' : message['Replied'],
                                 'Type' : 'text',
+                                'Muk' : message['Muk'],
+                                'Seen' : false
                             });
                             props.update_chat_position(message['From'])
                             await fun_database.store_message_db({
                                 'Contact' : message['Contact'],
                                 'Message' : message['Message'],
-                                'Status' : 'Delivered',
+                                'Status' : 'delivered',
                                 'Date' : new Date().toString(),
                                 'Receiving' : true,
                                 'Server_id' : message['From'],
                                 'forwarded' : message['forwarded'],
                                 'Starred' : false,
                                 'Replied' : message['Replied'],
-                                'Type' : 'text'
+                                'Type' : 'text',
+                                'Muk' : message['Muk'],
+                                'Seen' : false
                             })
   
                       } else {
@@ -117,27 +89,31 @@ export function MyTabs(props) {
                           await fun_database.store_message_db({
                             'Contact' : message['Contact'],
                             'Message' : resource,
-                            'Status' : 'finished',
+                            'Status' : 'delivered',
                             'Date' : new Date().toString(),
                             'Receiving' : true,
-                            'Server_id' : message['From'],
-                            'forwarded' : message['forwarded'],
-                            'Starred' : false,
-                            'Replied' : message['Replied'],
-                            'Type' : message['Type']
-                          })
-                          props.send_message( index , {
-                            'id' : 'Not saved',
-                            'Message' : resource,
-                            'Receiving' : true,
-                            'Contact' : message['Contact'],
-                            'Date' : new Date().toString(),
-                            'Status' : 'finished',
                             'Server_id' : message['From'],
                             'forwarded' : message['forwarded'],
                             'Starred' : false,
                             'Replied' : message['Replied'],
                             'Type' : message['Type'],
+                            'Muk' : message['Muk'],
+                            'Seen' : false,
+                          })
+                          props.send_message(index , {
+                            'id' : 'Not saved',
+                            'Message' : resource,
+                            'Receiving' : true,
+                            'Contact' : message['Contact'],
+                            'Date' : new Date().toString(),
+                            'Status' : 'delivered',
+                            'Server_id' : message['From'],
+                            'forwarded' : message['forwarded'],
+                            'Starred' : false,
+                            'Replied' : message['Replied'],
+                            'Type' : message['Type'],
+                            'Muk' : message['Muk'],
+                            'Seen' : false
                         });
                         props.update_chat_position(message['From'])
                         })
@@ -158,12 +134,14 @@ export function MyTabs(props) {
                                         'Message' : message['Message'],
                                         'Receiving' : true,
                                         'Date' : new Date().toString(),
-                                        'status' : 'delivered',
+                                        'Status' : 'delivered',
                                         'Server_id' : message['From'],
                                         'forwarded' : message['forwarded'],
                                         'Starred' : false,
                                         'Replied' : message['Replied'],
-                                        'Type' : 'text'
+                                        'Type' : 'text',
+                                        'Muk' : message['Muk'],
+                                        'Seen' : false
                                     }
                                 ]
                             }
@@ -175,32 +153,47 @@ export function MyTabs(props) {
                             await fun_database.store_message_db({
                               'Contact' : message['Contact'],
                               'Message' : message['Message'],
-                              'Status' : 'Delivered',
+                              'Status' : 'delivered',
                               'Date' : new Date().toString(),
                               'Receiving' : true,
                               'Server_id' : message['From'],
                               'forwarded' : message['forwarded'],
                               'Starred' : false,
                               'Replied' : message['Replied'],
-                              'Type' : 'text'
+                              'Type' : 'text',
+                              'Muk' : message['Muk'],
+                              'Seen' : false
                             })
-                        
+                            // Inserting the newbie's contact in the database 
+                            await fun_database.insert_chats_connes({'Name' : message['Name'] , 'Contact' : message['Contact'] , 'Server_id' : message['From']})
+                            // Inserting the newbie's contact in our realtime store(redux)
+                            props.update_active_contacts({'Name' : message['Name'] , 'Contact' : message['Contact'] , 'Server_id' : message['From']})
                         
                       } else {
                           //if they are a newbie and the message is not text
+
+                           // first Inserting the newbie's contact in the database 
+                          await fun_database.insert_chats_connes({'Name' : message['Name'] , 'Contact' : message['Contact'] , 'Server_id' : message['From']})
+                          
+                           // Inserting the newbie's contact in our realtime store(redux)
+                           props.update_active_contacts({'Name' : message['Name'] , 'Contact' : message['Contact'] , 'Server_id' : message['From']})
+                          
                           await fun_database.store_received_media(message['Message'] , message['Type']).then(async(resource)=>{
                             await fun_database.store_message_db({
                               'Contact' : message['Contact'],
                               'Message' : resource,
-                              'Status' : 'finished',
+                              'Status' : 'delivered',
                               'Date' : new Date().toString(),
                               'Receiving' : true,
                               'Server_id' : message['From'],
                               'forwarded' : message['forwarded'],
                               'Starred' : false,
                               'Replied' : message['Replied'],
-                              'Type' : message['Type']
+                              'Type' : message['Type'],
+                              'Muk' : message['Muk'],
+                              'Seen' : false
                             })
+
                             let info = {
                               'Name' : message['Name'],
                               'Server_id' : message['From'],
@@ -212,12 +205,14 @@ export function MyTabs(props) {
                                       'Message' :resource,
                                       'Receiving' : true,
                                       'Date' : new Date().toString(),
-                                      'Status' : 'finished',
+                                      'Status' : 'delivered',
                                       'Server_id' : message['From'],
                                       'forwarded' : message['forwarded'],
                                       'Starred' : false,
                                       'Replied' : message['Replied'],
-                                      'Type' : message['Type']
+                                      'Type' : message['Type'],
+                                      'Muk' : message['Muk'],
+                                      'Seen' : false,
                                   }
                               ]
                           }
@@ -245,6 +240,34 @@ export function MyTabs(props) {
                     break
                   }
                 }
+              } else if (message['type'] == 'Typing'){
+                let status = message['status']
+                if (status){
+                  let matched_data = fun_database.online_chats([message['From']] , props.state.fun.Contacts)
+                  props.typing(matched_data)
+                } else {
+                  for (const [key , value] of Object.entries(props.state.fun.Typing)){
+                    if (value == message['From']){
+                      props.stop_typing(key)
+                      break
+                    }
+                  }
+                }
+
+              }
+              else {
+                for(let i = 0; i > props.state.fun.Messages.length; i++){
+                  if(props.state.fun.Messages[i].Server_id == message['From']){
+                    for(let i = 0; i<props.state.fun.Messages.length; i++){
+                      for(let p = 0; p<props.state.fun.Messages[i]['Messages'].length; p++){
+                        if (props.state.fun.Messages[i]['Messages'][p]['Muk'] == message['Muk']){
+                          props.message_confirmation(i , p ,'delivered')
+                        } 
+                      }
+                    }
+                  }
+                }
+                Chat.update_message_progress(message['Muk'] , 'sent')
               }
             })
   
@@ -280,9 +303,18 @@ export function MyTabs(props) {
     },2000)
    
   }
+  function Hardware_click_back(){
+    // props.state.business.navigation.navigation.goBack()
+    // props.state.business.navigation.navigation.goBack()
+
+  }
   useEffect(()=>{
       //Instatiating websockets to the business server
       websockets()
+      BackHandler.addEventListener('hardwareBackPress' , Hardware_click_back)
+      return ()=>{
+        BackHandler.removeEventListener('hardwareBackPress' , Hardware_click_back)
+      }
   },[])
   return (
     <Tab.Navigator initialRouteName = {Fun}  screenOptions = {{tabBarLabelPosition :'below-icon',
@@ -293,7 +325,7 @@ export function MyTabs(props) {
       options={{
         headerShown : false,
         tabBarIcon : ({ color, size}) => (
-          <animatable.Text animation = {fun_anime} iterationCount={4} direction="alternate">
+          <animatable.Text animation = {fun_anime} iterationCount={7} direction="alternate">
           <MaterialCommunityIcons name = "heart-multiple" color = {props.state.fun.Layout_Settings.Bottom_navigation_icons_color} size={26}/>
           </animatable.Text>
         ),
@@ -301,7 +333,7 @@ export function MyTabs(props) {
       <Tab.Screen name="business" component={business} options={{
         headerShown : false,
         tabBarIcon : ({ color, size}) => (
-          <animatable.Text animation = {business_anime} iterationCount={4} direction="alternate-reverse">
+          <animatable.Text animation = {business_anime} iterationCount={7} direction="alternate-reverse">
           <MaterialCommunityIcons name = "battlenet" color = {props.state.fun.Layout_Settings.Bottom_navigation_icons_color} size={26}/>
           </animatable.Text>
         ),
@@ -333,8 +365,7 @@ let mapStateToProps = (state_redux) => {
 }
 
 let mapDispatchToProps = (dispatch) => ({
-  start_gig_notifications : (Name) => dispatch({type : 'create_business_websocket_instances' , Instance : Name}),
-  store_gig_notifications : (Message) => dispatch({type : 'ws_gig_notifications_message' , Message : Message}),
+  app_started : () => dispatch({type : 'app_started'}),
   update_messages : (Name , Content) => dispatch({ type : 'update_messages' , Name : Name , Content : Content}),
   send_message : (Index,message ) => dispatch({type : 'message_handler', content : message , Index : Index }),
   send_message_new : (content) => dispatch({type : 'new_chats' , content : content}),
@@ -344,7 +375,11 @@ let mapDispatchToProps = (dispatch) => ({
   disconnect_online_chat : (Name) => dispatch({ type : 'disconnect_online_chat' , Name : Name }),
   notify_disconnect : (value) => dispatch({ type : 'Refresh' , value : value }),
   connected : (value) => dispatch({ type : 'Connected' , value : value }),
-  offline_disconnect_chats : () => dispatch({ type : 'offline_disconnect_chats' })
+  offline_disconnect_chats : () => dispatch({ type : 'offline_disconnect_chats' }),
+  message_confirmation : (Index , messo_index , status) => dispatch({type : 'message_confirmation' , Index : Index , messo_index : messo_index , status : status }),
+  typing : (Personnel) => dispatch({ type : 'Typing' , Personnel : Personnel}),
+  stop_typing : (Name) => dispatch({ type : 'Stop_Typing' , Name : Name}),
+  update_active_contacts : (chat_data) => dispatch({type : 'update_active_contacts' , chat_data : chat_data})
 })
 
 

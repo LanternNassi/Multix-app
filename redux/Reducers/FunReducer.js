@@ -15,6 +15,7 @@ export default FunReducer = (state = {
         Bottom_navigation_icons_color : 'blue',
         Header_color : 'white',
     },
+    Typing : {},
     Connected : false,
 } , action) => {
     switch(action.type){
@@ -62,6 +63,12 @@ export default FunReducer = (state = {
                 ...state
             }
         }
+        case 'update_active_contacts' : {
+            state['Contacts'].push(...action.chat_data)
+            return {
+                ...state,
+            }
+        }
         case 'Load_messages' : {
             state['Messages'] = action.Messages
             return {
@@ -85,6 +92,12 @@ export default FunReducer = (state = {
                 ...state
             }
         }
+        case 'app_started' : {
+            state['app_started'] = true
+            return {
+                ...state
+            }
+        }
         case 'new_chats' : {
                 state['Messages'].push({...action.content})
                 return {
@@ -92,14 +105,25 @@ export default FunReducer = (state = {
                 }
             }
             
-        case 'after_upload_download' : {
-            state['Messages'][action.Index]['Messages'][action.messo_index]['Status'] = 'finished'
+        // case 'after_upload_download' : {
+        //     state['Messages'][action.Index]['Messages'][action.messo_index]['status'] = 'finished'
+        //     return {
+        //         ...state
+        //     }
+        // } 
+        case 'message_confirmation' : {
+            state['Messages'][action.Index]['Messages'][action.messo_index]['Status'] = action.status
             return {
                 ...state
             }
         } 
 
-       
+        case 'star_message' : {
+            state['Messages'][action.Index]['Messages'][action.messo_index]['Starred'] = action.value
+            return {
+                ...state
+            }
+        }
         case 'chats_positions' : {
             state['chats_positions'] = action.list
             return {
@@ -165,6 +189,24 @@ export default FunReducer = (state = {
         }
         case 'Connected' : {
             state['Connected'] = action.value
+            return {
+                ...state
+            }
+        }
+        case 'typing' : {
+            return {
+                ...state,
+                'Typing' : {...action.Personnel}
+            }
+        }
+        case 'stop_typing' : {
+            delete(state['Typing'][action.Name])
+            return {
+                ...state
+            }
+        }
+        case 'update_seen' : {
+            state['Messages'][action.Index]['Messages'][action.messo_index]['Seen'] = true
             return {
                 ...state
             }

@@ -1,5 +1,5 @@
 import React, { Component  , useState} from 'react'
-import {View , Text , StyleSheet , TouchableOpacity , ScrollView } from 'react-native'
+import {View , Text , StyleSheet , TouchableOpacity , ScrollView  , Alert} from 'react-native'
 import {Avatar} from 'react-native-elements'
 import { ScreenHeight, ScreenWidth } from 'react-native-elements/dist/helpers'
 import FontAwesomeIcon from 'react-native-vector-icons/FontAwesome'
@@ -104,10 +104,13 @@ export const Fun_4 = (props) => {
                                     // Signing up the user to our server
                                     function clean_up(processed_info){
                                         //setting one signal external id for this user
-                                        OneSignal.setExternalUserId(processed_info.Profile['Multix_token'])
-                                        console.log(processed_info)
+                                        // OneSignal.push(function() {
+                                        //     OneSignal.setExternalUserId(processed_info.Profile.Profile['Multix_token']);
+                                        //     OneSignal.setEmail(processed_info.Profile.Profile['Email']);
+                                        //   });
+                                        // console.log(processed_info)
                                         //Loading the profile into redux store for use 
-                                        props.store_fun_profile({...processed_info.Profile , 'Server_id' : processed_info.Server_id})
+                                        props.store_fun_profile({...processed_info.Profile.Profile , 'Server_id' : processed_info.Profile.Profile.id})
                                         //Loading the contacts into the redux for use
                                         props.store_contacts_redux(processed_info.Contacts) 
                                         props.store_online_chats({})

@@ -1,10 +1,13 @@
-import React, { Component } from 'react'
+import React, { Component , useEffect } from 'react'
 import {View , Text , StyleSheet , TouchableOpacity , Image , Button} from 'react-native'
 import { Avatar } from 'react-native-elements'
 import { connect } from 'react-redux'
 import { ScreenHeight , ScreenWidth} from 'react-native-elements/dist/helpers'
 
 export const WelcomeFun = (props) => {
+    useEffect(()=>{
+        // props.app_started()
+    },[])
     return (
         <View style = {styles.container}>
             <Image height = {0.4 * ScreenHeight} width = {0.7 * ScreenWidth}  source = {require('../assets/Notifications.png')} style = {{
@@ -36,9 +39,9 @@ const mapStateToProps = (state) => {
     return {state}
 }
 
-const mapDispatchToProps = {
-    
-}
+const mapDispatchToProps = (dispatch) =>({
+    app_started : () => dispatch({type : 'app_started'}),
+})
 
 export default connect(mapStateToProps, mapDispatchToProps)(WelcomeFun)
 

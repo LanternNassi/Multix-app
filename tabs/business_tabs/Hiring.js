@@ -55,7 +55,7 @@ export class Hiring extends Component {
                 url : 'create_hiring_applicant' ,
                 data : {
                     'gig_id' : gig_id,
-                    'Approved' : false,
+                    'Approved' : 'false',
                 }
             }).then((response)=>{
                 if (response.status === 201){

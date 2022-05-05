@@ -10,12 +10,10 @@ import AwesomeIcon from 'react-native-vector-icons/FontAwesome';
 
 export default function main() {
     return (
-        <Paper theme = {DarkTheme} settings = {{ icon: props => <AwesomeIcon {...props}  /> }}>
-            <ThemeProvider theme = {DarkTheme}>
+        <Paper settings = {{ icon: props => <AwesomeIcon {...props}  /> }}>
         <Provider store = {store}>
             <Stackscreens/>
         </Provider>
-        </ThemeProvider>
         </Paper>
     )
 }

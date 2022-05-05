@@ -6,7 +6,7 @@ import axios from 'axios'
 import Gig_notifications from '../../websockets/Gig_notifications.js'
 
 let Overall_State = {
-    Debug : false,
+    Debug : true,
     Business_profile : {},
     Username : 'Lantern',
     navigation : 'navigate',
@@ -25,7 +25,6 @@ let Overall_State = {
         ]
     },
     
-
     theme : Theme.purger,
     current_chat : {
         name : "Any"

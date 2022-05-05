@@ -1,6 +1,6 @@
 import React , {Component , useState , useEffect} from 'react'
 import {Avatar , ListItem , Switch} from 'react-native-elements'
-import {View , Text , TextInput , Image , Button , StyleSheet , ScrollView , Share} from 'react-native';
+import {View , Text , TextInput , Image , Button , StyleSheet , ScrollView , Share , Alert} from 'react-native';
 import Header from '../constants/Header.js'
 import FileSystem from 'expo-file-system'
 import * as SQLite from 'expo-sqlite';
@@ -14,7 +14,7 @@ import * as Sharing from 'expo-sharing'
 
 
 export function Settings(props) {
-    
+    const [nots , setnots] = useState(false)
     useEffect(()=>{
         if (!props.business.request_business_json){
             props.create_request_instances((props.business.Business_profile.Account)?(props.business.Business_profile.Account.Multix_token) : ('000'))
@@ -92,14 +92,16 @@ export function Settings(props) {
                 </ListItem>
                 </TouchableOpacity>
 
-                <TouchableOpacity>
+                <TouchableOpacity onPress = {()=>{
+                    nots ? setnots(false) : setnots(true)
+                }}>
                 <ListItem>
                     <Avatar rounded containerStyle = {{ backgroundColor : props.fun.Layout_Settings.Icons_surroundings }} icon = {{ name : 'credit-card-alt' , color : props.fun.Layout_Settings.Icons_Color, type : 'font-awesome' }} />
                     <ListItem.Content style = {{ flexDirection : 'column', justifyContent : 'space-between' }}>
                     <ListItem.Title> Show Notifications </ListItem.Title>
                     <ListItem.Subtitle> Allow Multix to show notifications </ListItem.Subtitle>
                     </ListItem.Content>
-                    <Switch value = {false} color = {'black'}/>
+                    <Switch value = {nots} color = {props.fun.Layout_Settings.Icons_Color}/>
                 </ListItem>
                 </TouchableOpacity>
 
@@ -169,6 +171,8 @@ export function Settings(props) {
                 </ListItem>
                 </TouchableOpacity>
 
+               
+
                 <TouchableOpacity onPress = {
                     () => {
                         props.business.navigation.navigation.navigate('Privacy Policy' )
@@ -184,6 +188,28 @@ export function Settings(props) {
                 </ListItem>
                 </TouchableOpacity>
 
+                <TouchableOpacity onPress = {
+                    () => {
+                        // props.business.navigation.navigation.navigate('Feedback' , { type : 'Feedback' })
+                        Alert.alert('Delete account' , 
+                        'Once you delete your account , all your content will be deleted from our servers and you will nolonger be able to receive any more services from us whereas the data stored on your device will remain until you uninstall the app ',
+                        [
+                            {text : 'Delete' , onPress : async ()=>{}},
+                            {text : 'Cancel' , onPress : ()=>{}}
+                    ]
+                        )
+                    }
+                } >
+                <ListItem>
+                    <Avatar rounded containerStyle = {{ backgroundColor : props.fun.Layout_Settings.Icons_surroundings }} icon = {{ name : 'warning' , color : props.fun.Layout_Settings.Icons_Color, type : 'font-awesome' }} />
+                    <ListItem.Content style = {{ flexDirection : 'column', justifyContent : 'space-between' }}>
+                    <ListItem.Title> Delete account </ListItem.Title>
+                    <ListItem.Subtitle> No longer comfortable with us ?? , The choice is yours.</ListItem.Subtitle>
+                    </ListItem.Content>
+                    <ListItem.Chevron/>
+                </ListItem>
+                </TouchableOpacity>
+
                 <View style = {{
                     height : 0.1 * ScreenHeight,
                     width : ScreenWidth,
@@ -192,7 +218,7 @@ export function Settings(props) {
                 }}>
                     <Text style = {{ fontSize : 14 , }}> Multix Version 1.0.0 </Text>
                     <Text style = {{ fontSize : 9 ,  }}> Special Regards to @Nessim and @Douglas </Text>
-                    <Text style = {{ fontSize : 9 ,  }}> For more information contact us at Multixapp@gmail.com </Text>
+                    <Text style = {{ fontSize : 9 ,  }}> For more information contact us at MultixApp@gmail.com </Text>
 
 
                 </View>

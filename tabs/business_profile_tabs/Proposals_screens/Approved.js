@@ -9,9 +9,11 @@ export const Approved = (props) => {
     return (
         <View style = {{ flex : 1 , justifyContent : 'center' , alignItems : 'center' }}>
              <FlatList 
-                style = {{ flex : 1 , justifyContent : 'center' , alignItems : 'center' }}
+                style = {{ flex : 1  }}
                 data = {props.state.business.Contracts_proposals}
-               
+                contentContainerStyle = {{
+                    justifyContent : 'center' , alignItems : 'center'
+                }}
                 ListEmptyComponent = {
                     ()=>(
                         <View style = {{

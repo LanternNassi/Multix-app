@@ -13,7 +13,7 @@ import axios from 'axios'
 
 export const Picture = (props) => {
     const [progress , setprogress] = useState(0)
-    convert_time_to_12 = (time) => {
+    const convert_time_to_12 = (time) => {
         if ( time.slice(0,2) > 12){
             let new_date = time.slice(0,2)-12 + time.slice(2,time.length) + ' pm'
             return new_date
@@ -21,11 +21,52 @@ export const Picture = (props) => {
             return time + ' am'
         }
     }
-    useEffect(()=>{
-        if (props.Status == 'finished'){
-
-        } else {
+    function type_status(){
+        if (props.Status == 'failed'){
+            return 'history'
+        } else if (props.Status == 'sent'){
+            return 'bolt'
+        } else if (props.Status == 'deliverd'){
+            return 'check'
+        }
+    }
+    useEffect(async()=>{
+        if (props.Status == 'sent' || props.Status == 'delivered' ){
+            if(props.type && !props.Seen){
+                for(let i = 0; i < props.state.fun.Messages.length; i++){
+                    if(props.state.fun.Messages[i].Server_id == props.Server_id){
+                        for(let p = 0; p<props.state.fun.Messages[i]['Messages'].length; p++){
+                          if (props.state.fun.Messages[i]['Messages'][p]['Muk'] == props.Muk){
+                            props.update_seen(i , p )
+                            await fun_database.update_seen_status_message(props.Muk)
+                            break
+                          } 
+                        } 
+                    }
+                  }   
+                }
+        } else if (props.Status == 'first-tym' || props.Status == 'failed') {
+            console.log(props.Status)
             const upload_media = async (info , file , Server_id , Contact) => {
+                 //Storing the message in the database
+                 const saved_file = await fun_database.store_sent_message(file)
+                 if (props.Status == 'first-tym'){
+                    await fun_database.store_message_db({
+                        'Contact' : Contact,
+                        'Message' : saved_file,
+                        'Status' : 'failed',
+                        'Date' : new Date().toString(),
+                        'Receiving' : false,
+                        'Server_id' : Server_id,
+                        'forwarded' : false,
+                        'Starred' : false,
+                        'Replied' : null,
+                        'Type' : mime.lookup(saved_file).split('/')[0],
+                        'Muk' : props.Muk,
+                        'Seen' : true,
+                    })
+                 } 
+              
                 const newImageUri = "file:///" + file.split("file:/").join("")
                 const new_file = {
                     uri : newImageUri,
@@ -52,8 +93,7 @@ export const Picture = (props) => {
                     
                     if (response.status == 201){
                         //console.log(props.state.fun['Messages'][props.Index]['Messages'][props.message_index])
-                        props.notify_status(props.Index , props.message_index)
-                        const saved_file = await fun_database.store_sent_message(file)
+                        //props.notify_status(props.Index , props.message_index)
                         //Sending the message to the receiver
                         await Chat.sendMessage({
                             'type' : 'File',
@@ -63,35 +103,64 @@ export const Picture = (props) => {
                             'Name' : props.state.fun.Fun_profile.Name,
                             'Contact' : props.state.fun.Fun_profile.Contact,
                             'Message' : response.data,
-                            'forwarded' : 'Not forwarded',
-                            'Starred' : false,
-                            'Type' : mime.lookup(saved_file).split('/')[0],
-                            'Replied' : null
-                        })
-                        // Clearing the textinput for more  input
-                       //Storing the message in the database
-                        await fun_database.store_message_db({
-                            'Contact' : Contact,
-                            'Message' : saved_file,
-                            'Status' : 'finished',
-                            'Date' : new Date().toString(),
-                            'Receiving' : false,
-                            'Server_id' : Server_id,
                             'forwarded' : false,
                             'Starred' : false,
-                            'Replied' : null,
                             'Type' : mime.lookup(saved_file).split('/')[0],
+                            'Replied' : null,
+                            'Muk' : props.Muk
                         })
-                      
+                        await fun_database.update_message_progress(props.Muk , 'sent')
+                        for(let i = 0; i < props.state.fun.Messages.length; i++){
+                            // console.log(props.fun.Messages[i])
+                            if(props.state.fun.Messages[i].Server_id == props.Server_id){
+                                for(let p = 0; p<props.state.fun.Messages[i]['Messages'].length; p++){
+                                console.log(props.state.fun.Messages[i]['Messages'][p]['Muk'] , ' ' , props.Muk )
+                                  if (props.state.fun.Messages[i]['Messages'][p]['Muk'] == props.Muk){
+                                    props.message_confirmation(i , p , 'sent')
+                                    break
+                                  } 
+                                } 
+                            }
+                          }   
             
                     }
                     else {
-                        console.log(response.status)
+                        if (props.Status == 'first-tym'){
+                            await fun_database.update_message_progress(props.Muk , 'failed')
+                            for(let i = 0; i < props.state.fun.Messages.length; i++){
+                                // console.log(props.fun.Messages[i])
+                                if(props.state.fun.Messages[i].Server_id == props.Server_id){
+                                    for(let p = 0; p<props.state.fun.Messages[i]['Messages'].length; p++){
+                                      if (props.state.fun.Messages[i]['Messages'][p]['Muk'] == props.Muk){
+                                            props.message_confirmation(i , p , 'failed')
+                                        break
+                                      } 
+                                    } 
+                                }
+                              } 
+                        }
                     }
                    
+                }).catch(async()=>{
+                    if (props.Status == 'first-tym'){
+                        await fun_database.update_message_progress(props.Muk , 'failed')
+                        for(let i = 0; i < props.state.fun.Messages.length; i++){
+                            // console.log(props.fun.Messages[i])
+                            if(props.state.fun.Messages[i].Server_id == props.Server_id){
+                                for(let p = 0; p<props.state.fun.Messages[i]['Messages'].length; p++){
+                                  if (props.state.fun.Messages[i]['Messages'][p]['Muk'] == props.Muk){
+                                        props.message_confirmation(i , p , 'failed')
+                                    break
+                                  } 
+                                } 
+                            }
+                          } 
+                    }
                 })
             }
-            upload_media(props.info , props.image_uri , props.Server_id , props.Contact)
+            if (!props.type){
+                upload_media(props.info , props.image_uri , props.Server_id , props.Contact)
+            }
         }
     },[])
     return (
@@ -105,16 +174,22 @@ export const Picture = (props) => {
         }>
             <Image source = {{ uri : props.image_uri }} style = {styles.image}/>
             {
-                (progress >= 1 || props.Status == 'finished')  ?(
+                (progress >= 1 || props.Status == 'sent' || props.Status == 'delivered')  ?(
                     <Avatar rounded style = {styles.play} icon = {{ name : 'music' , type : 'font-awesome' , color : 'white' }} size = {'large'} />
                 ) : (
                     <Progress.CircleSnail  size = { 60 } progress = {progress} color = {'white'} style = { styles.play }/>
                 ) 
             }
         </TouchableOpacity>
-        <Text>
-            @{convert_time_to_12(props.date)}
-        </Text>
+        <View style = {{
+                // width : 200,
+                flexDirection : 'row',
+                justifyContent : 'space-around',
+                alignItems : 'center'
+            }} >
+            <Avatar containerStyle = {{backgroundColor : 'transparent' }} rounded icon = {{name : type_status(), color : props.Status == 'deliverd'? ('black') : ('black'), type : 'font-awesome' , size : 12}}/>
+            <Text style = {{ fontStyle : 'italic' , fontSize : 12 }}>@{convert_time_to_12(props.date) }</Text>
+            </View>
         </View>
     )
 }
@@ -124,8 +199,9 @@ const mapStateToProps = (state) => {
 }
 
 const mapDispatchToProps = (dispatch) => ({
-    notify_status : (Index , messo_index) => dispatch({ type : 'after_upload_download' , Index : Index , messo_index : messo_index })
-    
+    // notify_status : (Index , messo_index) => dispatch({ type : 'after_upload_download' , Index : Index , messo_index : messo_index }),
+    message_confirmation : (Index , messo_index , status) => dispatch({type : 'message_confirmation' , Index : Index , messo_index : messo_index , status : status }),
+    update_seen : (Index , messo_index) => dispatch({type : 'update_seen' , Index : Index , messo_index : messo_index})
 })
 
 
@@ -144,6 +220,8 @@ const styles = StyleSheet.create({
     image : {
         height : 0.48 * ScreenHeight,
         width : 0.65 * ScreenWidth,
+        // justifyContent : 'center',
+        // alignItems : 'center'
     },
     play : {
         position : 'absolute',

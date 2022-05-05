@@ -23,7 +23,7 @@ export function Business_page(props) {
         if (props.state.Business_profile.Account){
             axios({
                 method : 'GET',
-                url : 'http://multix-business.herokuapp.com/fill_gigs/?Gig_type=Selling' ,
+                url : props.state.Debug ? ('http://192.168.43.232:8000/fill_gigs/?Gig_type=Selling') : ('http://multix-business.herokuapp.com/fill_gigs/?Gig_type=Selling') ,
                 headers : { 
                     'content-type' : 'application/json',
                     'Authorization': 'Token ' + props.state.Business_profile['Account']['Multix_token'] ,
@@ -217,7 +217,7 @@ export function Business_page(props) {
                                                                 props.state.navigation.navigation.navigate('information' , {account : item.item})
                   
                                                             }
-                                                        } style = {{...styles.propose , backgroundColor : props.fun.Layout_Settings.Icons_surroundings}}>
+                                                        } style = {{...styles.propose , backgroundColor : props.fun.Layout_Settings.Icons_Color}}>
                                                             <Text style = {{
                                                                 color : 'white',
                                                             }}>

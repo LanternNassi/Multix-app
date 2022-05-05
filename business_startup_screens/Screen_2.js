@@ -13,11 +13,10 @@ export function Screen_2(props) {
     const [email_error , setemail_error] = useState(false)
     return (
         <ScrollView style = {styles.container}>
-            
             <View style = {{ top : 20 , alignItems : 'center' }}>   
             <View style = {{ justifyContent : 'space-around' , alignItems : 'center'  }}>
                 <Avatar rounded containerStyle = {{ backgroundColor: props.fun.Layout_Settings.Icons_surroundings , elevation : 10 }} icon = {{ name : 'user-plus' , color : props.fun.Layout_Settings.Icons_Color , type : 'font-awesome' }} size = {'medium'} />
-                <Text style = {styles.disclaimer}>STEP 2 OF 8</Text>
+                <Text style = {styles.disclaimer}>STEP 2 OF 6</Text>
             </View>
             <View style = {styles.input_container} >
             {
@@ -83,7 +82,7 @@ export function Screen_2(props) {
                 iconWidth={40}
                 inputPadding={16}
                 inputStyle = {{ color : 'black' }}
-                secureTextEntry = {true}
+                secureTextEntry = {false}
                 onChangeText = { text => {
                     setPassword(text)
                 }}

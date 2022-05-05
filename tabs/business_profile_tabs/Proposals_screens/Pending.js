@@ -30,9 +30,11 @@ export const Pending = (props) => {
     return (
         <View style = {{  flex : 1 , justifyContent : 'center' , alignItems : 'center'  }} >
              <FlatList 
-                style = {{ flex : 1 ,  alignItems : 'center' }}
+                style = {{ flex : 1 ,  }}
                 data = {props.state.business.Contracts_proposals}
-                
+                contentContainerStyle = {{
+                    alignItems : 'center'
+                }}
                 ListEmptyComponent = {
                     ()=>(
                         <View style = {{
@@ -44,7 +46,7 @@ export const Pending = (props) => {
                         <Image style = {{
                             height : 0.75 * ScreenHeight,
                             width : ScreenWidth,
-                            opacity : 0.3
+                            opacity : 0.1
                         }} source = {require('../../../assets/no-business-deals.jpg')}/>
                         </View>
                     )}

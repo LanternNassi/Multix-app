@@ -1,5 +1,5 @@
 import React , {Component} from 'react'
-import {Text , View, StyleSheet ,TextInput, TouchableOpacity , FlatList,TouchableNativeFeedback,Share } from 'react-native';
+import {Text , View, StyleSheet ,TextInput, TouchableOpacity , FlatList,TouchableNativeFeedback,Share , Keyboard } from 'react-native';
 import { Avatar,SpeedDial,Badge } from 'react-native-elements'
 import { ScreenWidth, ScreenHeight } from 'react-native-elements/dist/helpers';
 import Theme from './../constants/Theme.js'
@@ -20,12 +20,14 @@ import axios from 'axios'
 import FormData, {getHeaders} from 'form-data'
 import * as mime from 'react-native-mime-types'
 import * as Sharing from 'expo-sharing'
+import * as FileSystem from 'expo-file-system';
+
 
 
 
 import Picture from './Media_components/Picture.js'
 import Video_comp from './Media_components/Video.js'
-//import Audio_clip from './Media_components/Audio.js'
+import Audio_comp from './Media_components/Audio.js'
 import Pdf from './Media_components/Pdf.js'
  
 const spread_out = {
@@ -58,6 +60,17 @@ const spread_out = {
     }
 },
 
+ressurect = {
+    0 : {
+        bottom : 0.03 * ScreenHeight,
+    }, 
+    0.5 : {
+        bottom : 0.45 * ScreenHeight,
+    },
+    1 : {
+        bottom : 0.14 * ScreenHeight
+    }
+}
 
 
 reply_message = {
@@ -107,7 +120,7 @@ after_reply_message = {
     },
 }
 
- spread_out_camera = {
+ const spread_out_camera = {
     0 : {
         bottom : 0,
         right : 0 ,
@@ -125,6 +138,7 @@ class Chats_screen extends Component {
         super(props)
     }
     times = 0
+    video_uri = ''
     cam = null;
     video_resource = null
     message = null
@@ -158,8 +172,8 @@ class Chats_screen extends Component {
     
 
     
-
     store_to_redux = async (file) => {
+        // console.log(mime.lookup(file).split('/')[0])
         if (this.state.current_index === 0 || this.state.current_index){
             this.props.send_message( this.state.current_index ,  {
                 'id' : 'Not saved',
@@ -167,9 +181,11 @@ class Chats_screen extends Component {
                 'Message' : file,
                 'Receiving' : false,
                 'Date' : new Date().toString(),
-                'Status' : 'Not sent',
+                'Status' : 'first-tym',
                 'Server_id' : this.props.route.params['Server_id'],
+                'Starred' : false,
                 'Type' : mime.lookup(file).split('/')[0],
+                'Muk' : this.message_unique_token_generator()
             });
             this.props.update_chat_position(this.props.route.params['Server_id'])
             
@@ -185,9 +201,11 @@ class Chats_screen extends Component {
                         'Message' : file,
                         'Receiving' : false,
                         'Date' : new Date().toString(),
-                        'Status' : 'Not sent',
+                        'Status' : 'first-tym',
                         'Server_id' :this.props.route.params['Server_id'],
-                        'Type' : mime.lookup(file).split('/')[0]
+                        'Starred' : false,
+                        'Type' : mime.lookup(file).split('/')[0],
+                        'Muk' : this.message_unique_token_generator()
                     }
                 ]
             }
@@ -216,6 +234,23 @@ class Chats_screen extends Component {
         }
     }
 
+    message_unique_token_generator = () => {
+        let rand_letters = ['A' ,'B' , 'C', 'F' , 'H' , 'j' , 'Y' , 'Z' , 'R' , 'T']
+        let rand_symbs  = ['!' , '#' , '%' , '&' , '@' , '&' , '$' , '+' , '|' , '_']
+        let token = [...this.props.state.fun.Fun_profile.Multix_token.slice(0,5)];
+        for(let i = 0; i < 6; i++){
+            token.push(Math.floor(Math.random()*10))
+        }
+        for(let i = 0; i<6; i++){
+            token.push(rand_letters[Math.floor(Math.random()*10)])
+        }
+        for(let i = 0; i<6; i++){
+            token.push(rand_symbs[Math.floor(Math.random()*10)])
+        }
+        // console.log(token.join(''))
+        return token.join('')
+    }
+
     contact = (Server_id) => {
         if ( this.props.state.fun.Contacts[0].Server_id){
             for(let i = 0; i < this.props.state.fun.Contacts.length; i++){
@@ -238,6 +273,30 @@ class Chats_screen extends Component {
         const {Index} = this.props.route.params ;
         const Contact = this.contact(this.props.route.params['Server_id'])
         this.setState({current_index : Index , Contact : Contact})
+    }
+
+    UNSAFE_componentWillMount = () =>{
+        this.keyboardDidShowListener = Keyboard.addListener('keyboardDidShow' , this._keyboardDidShow)
+        this.keyboardDidHidelistener = Keyboard.addListener('keyboardDidHide' , this._keyboardDidHide)
+    }
+
+    componentWillUnmount = () =>{
+        this.keyboardDidShowListener.remove()
+        this.keyboardDidHidelistener.remove()
+    }
+
+    _keyboardDidShow = async () =>{
+        await Chat.sendMessage({
+            'type' : 'Typing' ,
+            'Receiver' : this.props.route.params['Server_id'],
+        })
+    }
+
+    _keyboardDidHide = async () =>{
+        await Chat.sendMessage({
+            'type' : 'Stop_Typing',
+            'Receiver' : this.props.route.params['Server_id'],
+        })
     }
 
     render = () =>{
@@ -263,7 +322,7 @@ class Chats_screen extends Component {
                     let number = this.props.state.fun.Messages[this.state.current_index].Messages.length
                     let previous_date = this.props.state.fun.Messages[this.state.current_index].Messages[previous_item]['Date']
                     if (item.item.Type == 'text'){
-                        //console.log(previous_date)
+                        // console.log(item.item)
                        
                         return  (
                             <View style = {{
@@ -281,7 +340,7 @@ class Chats_screen extends Component {
                                         backgroundColor : 'black',
                                         elevation : 10,
                                         borderRadius : 8
-                                       }} >       
+                                       }}>       
                                            <Text style = {{ color : 'white',fontWeight : 'bold' }} > { previous_date.slice(0,15) } </Text>
                                        </View>
                                        ) : (
@@ -301,11 +360,33 @@ class Chats_screen extends Component {
                             } >
                                 {
                                     (item.item.Reply == null) ? (
-                                        <Message 
+                                        <View style = {{ flexDirection : 'row' , justifyContent : 'space-between'  }}>
+                                            {!item.item.Receiving && ( item.item.Starred != 0) && !item.item.forwarded? (
+                                            <Avatar rounded containerStyle = {{ backgroundColor : 'transparent' }} size = {'small'} icon = {{ name : 'star' , color : this.props.state.fun.Layout_Settings.Icons_Color , type : 'font-awesome' }}/>
+                                            ) : (<View/>)}
+                                             {!item.item.Receiving && item.item.forwarded? (
+                                            <Avatar rounded containerStyle = {{ backgroundColor : 'transparent' }} size = {'small'} icon = {{ name : 'bullhorn' , color : this.props.state.fun.Layout_Settings.Icons_Color , type : 'font-awesome' }}/>
+                                            ) : (<View/>)}
+                                            <Message 
                                             messo = {item.item.Message} 
                                             type = {item.item.Receiving}
                                             date = {item.item.Date.slice(16,24) }
+                                            Starred = {item.item.Starred}
+                                            Contact = {this.state.Contact}
+                                            Server_id = {Server_id}
+                                            Muk = {item.item.Muk}
+                                            Status = {item.item.Status}
+                                            forwarded = {item.item.forwarded}
+                                            Seen = {item.item.Seen}
                                             />
+                                             {item.item.Receiving && (item.item.Starred != 0) && !item.item.forwarded? (
+                                            <Avatar rounded containerStyle = {{ backgroundColor : 'transparent' }} size = {'small'} icon = {{ name : 'star' , color : this.props.state.fun.Layout_Settings.Icons_Color , type : 'font-awesome' }}/>
+                                            ) : (<View/>)}
+                                            {item.item.Receiving && item.item.forwarded? (
+                                            <Avatar rounded containerStyle = {{ backgroundColor : 'transparent' }} size = {'small'} icon = {{ name : 'bullhorn' , color : this.props.state.fun.Layout_Settings.Icons_Color , type : 'font-awesome' }}/>
+                                            ) : (<View/>)}
+                                        </View>
+                                        
                                     ) : (
                                         <Reply_Message 
                                             messo = {item.item.Message} 
@@ -372,22 +453,41 @@ class Chats_screen extends Component {
                                     },message_action : true})
                                 }
                             } >
-                            <Picture 
-                                image_uri = {item.item.Message}
-                                info = {{
-                                    'To' : Server_id,
-                                    'forwarded' : false,
-                                    'Reply' : false
-                                }}
-                                Contact = {
-                                    this.state.Contact
-                                }
-                                Server_id = {Server_id}
-                                Status = { item.item.Status }
-                                date = {item.item.Date.slice(16,24) }
-                                Index = {Index}
-                                message_index = {item.index}
-                             />
+                                <View style = {{ flexDirection : 'row' , justifyContent : 'space-between'  }} >
+                                {!item.item.Receiving && ( item.item.Starred != 0) && !item.item.forwarded? (
+                                <Avatar rounded containerStyle = {{ backgroundColor : 'transparent' }} size = {'small'} icon = {{ name : 'star' , color : this.props.state.fun.Layout_Settings.Icons_Color , type : 'font-awesome' }}/>
+                                ) : (<View/>)}
+                                {!item.item.Receiving && item.item.forwarded? (
+                                    <Avatar rounded containerStyle = {{ backgroundColor : 'transparent' }} size = {'small'} icon = {{ name : 'bullhorn' , color : this.props.state.fun.Layout_Settings.Icons_Color , type : 'font-awesome' }}/>
+                                    ) : (<View/>)}
+                                        <Picture 
+                                        image_uri = {item.item.Message}
+                                        info = {{
+                                            'To' : Server_id,
+                                            'forwarded' : false,
+                                            'Reply' : false
+                                        }}
+                                        Contact = {
+                                            this.state.Contact
+                                        }
+                                        Server_id = {Server_id}
+                                        Status = { item.item.Status }
+                                        Seen = {item.item.Seeen}
+                                        date = {item.item.Date.slice(16,24) }
+                                        type = {item.item.Receiving}
+                                        Starred = {item.item.Starred}
+                                        Index = {Index}
+                                        message_index = {item.index}
+                                        Muk = {item.item.Muk}
+                                    />
+                                     {item.item.Receiving && (item.item.Starred || item.item.Starred != 0) && !item.item.forwarded? (
+                                    <Avatar rounded containerStyle = {{ backgroundColor : 'transparent' }} size = {'small'} icon = {{ name : 'star' , color : this.props.state.fun.Layout_Settings.Icons_Color , type : 'font-awesome' }}/>
+                                    ) : (<View/>)}
+                                     {item.item.Receiving && item.item.forwarded? (
+                                        <Avatar rounded containerStyle = {{ backgroundColor : 'transparent' }} size = {'small'} icon = {{ name : 'bullhorn' , color : this.props.state.fun.Layout_Settings.Icons_Color , type : 'font-awesome' }}/>
+                                        ) : (<View/>)}
+                                </View>
+                            
                             </TouchableOpacity>
                             {
                                    (previous_date.slice(8,10) != item.item.Date.slice(8,10)) ? (
@@ -446,6 +546,13 @@ class Chats_screen extends Component {
                                     },message_action : true})
                                 }
                             } >
+                            <View style = {{ flexDirection : 'row' , justifyContent : 'space-between' , alignItems : 'center' }} >
+                            {!item.item.Receiving && (item.item.Starred || item.item.Starred != '0') && !item.item.forwarded? (
+                            <Avatar rounded containerStyle = {{ backgroundColor : 'transparent' }} size = {'small'} icon = {{ name : 'star' , color : this.props.state.fun.Layout_Settings.Icons_Color , type : 'font-awesome' }}/>
+                            ) : (<View/>)}
+                            {!item.item.Receiving && item.item.forwarded? (
+                                <Avatar rounded containerStyle = {{ backgroundColor : 'transparent' }} size = {'small'} icon = {{ name : 'bullhorn' , color : this.props.state.fun.Layout_Settings.Icons_Color , type : 'font-awesome' }}/>
+                                ) : (<View/>)}
                             <Video_comp 
                                 video_uri = {item.item.Message }
                                 info = {{
@@ -456,12 +563,23 @@ class Chats_screen extends Component {
                                 Contact = {
                                     this.state.Contact
                                 }
+                                type = {item.item.Receiving}
                                 Server_id = {Server_id}
                                 Status = { item.item.Status }
+                                Seen = {item.item.Seen}
                                 date = {item.item.Date.slice(16,24) }
+                                Starred = {item.item.Starred}
                                 Index = {this.state.current_index}
                                 message_index = {item.index}
+                                Muk = {item.item.Muk}
                               />
+                               {item.item.Receiving && (item.item.Starred != 0) && !item.item.forwarded? (
+                                <Avatar rounded containerStyle = {{ backgroundColor : 'transparent' }} size = {'small'} icon = {{ name : 'star' , color : this.props.state.fun.Layout_Settings.Icons_Color , type : 'font-awesome' }}/>
+                                ) : (<View/>)}
+                               {item.item.Receiving && item.item.forwarded? (
+                                <Avatar rounded containerStyle = {{ backgroundColor :'transparent' }} size = {'small'} icon = {{ name : 'bullhorn' , color : this.props.state.fun.Layout_Settings.Icons_Color , type : 'font-awesome' }}/>
+                                ) : (<View/>)}
+                              </View>
                             </TouchableOpacity>
                             {
                                    (previous_date.slice(8,10) != item.item.Date.slice(8,10)) ? (
@@ -483,7 +601,100 @@ class Chats_screen extends Component {
                                }
                             </View>
                         )
-                    } else if (item.item.Type == 'application'){
+                    } else if (item.item.Type == 'audio'){
+                        console.log('audio')
+                        return (
+                            <View style = {{
+                                width : ScreenWidth,
+                                alignItems : 'center'
+                            }}>
+                                {
+                                   ((item.index === (number-1) )) ? (
+                                       <View style = {{
+                                    
+                                        //width : 0.3 * ScreenWidth,
+                                        alignItems : 'center',
+                                        justifyContent : 'center',
+                                        border : 0.5,
+                                        backgroundColor : 'black',
+                                        elevation : 10,
+                                        borderRadius : 8
+                                       }} >       
+                                           <Text style = {{ color : 'white',fontWeight : 'bold' }} > { previous_date.slice(0,15) } </Text>
+                                       </View>
+                                       ) : (
+                                       <View/>
+                                   )
+                               }
+                                
+                            <TouchableOpacity style = {{ paddingTop : 10 ,
+                                 paddingBottom : 10 ,
+                                 alignItems : item.item.Receiving ? 'flex-start' : 'flex-end' , 
+                                 width : 0.98 * ScreenWidth  }} onLongPress = {
+                                ()=> {
+                                    this.setState({selected_message : {
+                                        Index : item.index,
+                                        Message : item.item
+                                    },message_action : true})
+                                }
+                            } >
+                            <View style = {{ flexDirection : 'row' , justifyContent : 'space-between' , alignItems : 'center' }} >
+                            {!item.item.Receiving && (item.item.Starred || item.item.Starred != '0') && !item.item.forwarded? (
+                            <Avatar rounded containerStyle = {{ backgroundColor : 'transparent' }} size = {'small'} icon = {{ name : 'star' , color : this.props.state.fun.Layout_Settings.Icons_Color , type : 'font-awesome' }}/>
+                            ) : (<View/>)}
+                            {!item.item.Receiving && item.item.forwarded? (
+                                <Avatar rounded containerStyle = {{ backgroundColor : 'transparent' }} size = {'small'} icon = {{ name : 'bullhorn' , color : this.props.state.fun.Layout_Settings.Icons_Color , type : 'font-awesome' }}/>
+                                ) : (<View/>)}
+                            <Audio_comp 
+                                audio_uri = {item.item.Message }
+                                info = {{
+                                    'To' : Server_id,
+                                    'forwarded' : false,
+                                    'Reply' : false
+                                }}
+                                Contact = {
+                                    this.state.Contact
+                                }
+                                type = {item.item.Receiving}
+                                Server_id = {Server_id}
+                                Status = { item.item.Status }
+                                Seen = {item.item.Seen}
+                                date = {item.item.Date.slice(16,24) }
+                                Starred = {item.item.Starred}
+                                Index = {this.state.current_index}
+                                message_index = {item.index}
+                                Muk = {item.item.Muk}
+                              />
+                               {item.item.Receiving && (item.item.Starred != 0) && !item.item.forwarded? (
+                                <Avatar rounded containerStyle = {{ backgroundColor : 'transparent' }} size = {'small'} icon = {{ name : 'star' , color : this.props.state.fun.Layout_Settings.Icons_Color , type : 'font-awesome' }}/>
+                                ) : (<View/>)}
+                               {item.item.Receiving && item.item.forwarded? (
+                                <Avatar rounded containerStyle = {{ backgroundColor :'transparent' }} size = {'small'} icon = {{ name : 'bullhorn' , color : this.props.state.fun.Layout_Settings.Icons_Color , type : 'font-awesome' }}/>
+                                ) : (<View/>)}
+                              </View>
+                            </TouchableOpacity>
+                            {
+                                   (previous_date.slice(8,10) != item.item.Date.slice(8,10)) ? (
+                                       <View style = {{
+                                    
+                                        //width : 0.3 * ScreenWidth,
+                                        alignItems : 'center',
+                                        justifyContent : 'center',
+                                        border : 0.5,
+                                        backgroundColor : 'black',
+                                        elevation : 10,
+                                        borderRadius : 8
+                                       }} >       
+                                           <Text style = {{ color : 'white',fontWeight : 'bold' }} > { previous_date.slice(0,15) } </Text>
+                                       </View>
+                                       ) : (
+                                       <View/>
+                                   )
+                               }
+                            </View>
+                        )
+
+                    }else if (item.item.Type == 'application'){
                         return (
                             <View style = {{
                                 width : ScreenWidth,
@@ -513,7 +724,26 @@ class Chats_screen extends Component {
             />
             </View>
             
-           
+            { this.state.camera_video_active && this.state.Are_permissions_granted  ? (
+                
+                <View style = {{  position : 'absolute', height : this.state.video_height , width : this.state.video_width , backgroundColor : 'rgba(0,0,0,0.6)'  }}>
+                       <Animatable.View animation = {spread_out_camera} style = {{  position : 'absolute', bottom : 0.5 * ScreenHeight-90 , right : 0.5*ScreenWidth-90 ,  }}>
+                       <Camera style={styles.camera} type={Camera.Constants.Type.front} 
+                               
+                                   flashMode = {Camera.Constants.FlashMode.off}
+                                   ref = { ref => {
+                                //    this.setState({ cam : ref });
+                                   this.cam = ref
+                                   } }
+                               >
+                                   
+                           
+                               </Camera>
+
+                </Animatable.View>
+                    
+                </View>
+           ) : console.log()  }
             {  this.state.message_action ? (
                 <Animatable.View animation = {spread_out}
                      style = {{  position : 'absolute', height : ScreenHeight , width : ScreenWidth , backgroundColor : 'rgba(0,0,0,0.6)'  }}>
@@ -544,6 +774,23 @@ class Chats_screen extends Component {
                         </TouchableOpacity>
                         <Text style = {{ color : 'white' }}> Delete </Text>
                         </Animatable.View>
+                             <Animatable.View animation = {"slideInDown"} direction = {"alternate"} iterationCount = {1} style = {{
+                                height : 75,
+                                justifyContent : 'space-between',
+                                alignItems : 'center'
+                           }} >
+                           <TouchableOpacity onPress = {
+                               async ()=>{
+                                    this.setState({message_action : false})
+                                   this.props.state.business.navigation.navigation.navigate('Add chats to conversation' , {'Message' : this.state.selected_message.Message})
+                                   // await fun_database.star_message_db(this.state.selected_message.Message.id)
+                               }
+                           } >
+                               <Avatar rounded containerStyle = {{ backgroundColor : this.props.state.fun.Layout_Settings.Icons_surroundings }} size = {'medium'} icon = {{ name : 'reply' , color : this.props.state.fun.Layout_Settings.Icons_Color , type : 'font-awesome' }}/>
+                           </TouchableOpacity>
+                           <Text style = {{ color : 'white' }}> forward </Text>
+                           </Animatable.View>
+                       
                         <Animatable.View animation = {"slideInDown"} direction = {"alternate"} iterationCount = {1} style = {{
                              height : 75,
                              justifyContent : 'space-between',
@@ -552,12 +799,15 @@ class Chats_screen extends Component {
                         <TouchableOpacity onPress = {
                             async ()=>{
                                 await fun_database.star_message_db(this.state.selected_message.Message.id)
+                                this.setState({message_action : false})
+                                this.props.star_message(this.state.current_index,this.state.selected_message.Index ,true)
                             }
                         } >
                             <Avatar rounded containerStyle = {{ backgroundColor : this.props.state.fun.Layout_Settings.Icons_surroundings }} size = {'medium'} icon = {{ name : 'star' , color : this.props.state.fun.Layout_Settings.Icons_Color , type : 'font-awesome' }}/>
                         </TouchableOpacity>
                         <Text style = {{ color : 'white' }}> Star </Text>
                         </Animatable.View>
+
                         <Animatable.View animation = {"slideInDown"} direction = {"alternate"} iterationCount = {1} style = {{
                              height : 75,
                              justifyContent : 'space-between'
@@ -616,7 +866,45 @@ class Chats_screen extends Component {
                     icon = { this.state.open ? 'video-camera' : 'microphone'}
                     
                     actions = {[
-                        
+                        // {icon : 'microphone' , label : 'Send music' , onPress : async ()=>{
+                        //     // const { status } = await Permissions.askAsync(Permissions.CAMERA_ROLL);
+                        //     // if (status === "granted"){
+                        //     try {
+                        //        let result = await DocumentPicker.getDocumentAsync({'type' : 'audio/*' , 'multiple' : false , copyToCacheDirectory : true})
+                        //     //    console.log(result)
+                        //         if (result){
+                        //             // console.log(mime.lookup(result.uri).split('/')[0])
+                        //             let check_list = result.uri.split('.')
+                        //             if (check_list[3]){
+                        //                 console.log('from the obfuscated')
+                        //                 let new_uri_list = result.uri.split('')
+                        //                 let count_list = check_list[3].split('')
+                        //                 new_uri_list.splice(new_uri_list.length-count_list.length , 3 , ...(result.mimeType.split('/')[1].split('')) )
+                        //                 console.log(mime.lookup(new_uri_list.join('')))
+                        //                 // new_uri_list.pop()
+                        //                 // new_uri_list.pop()
+                        //                 // new_uri_list.pop()
+                        //             } else {
+                        //                 let new_uri_list = result.uri.split('')
+                        //                 new_uri_list.push(...(result.mimeType.split('/')[1].split('')))
+                        //                 console.log(mime.lookup(new_uri_list.join('')))
+                        //             }
+                                   
+                        //             // new_uri_list.splice(new_uri_list.length-3 , new_uri_list.length)
+                        //             // console.log(new_uri_list.join(''))
+                        //             // console.log(result.uri)
+                        //             // console.log((result.uri).split('').splice(result.uri.length-2 , result.uri.length))
+                        //             // let new_uri = (result.uri).split('').splice(result.uri.length-3 , result.uri.length).push(...result.mimeType.split('/')[0].split('')).join('')
+                        //             // console.log(new_uri)
+                        //             // console.log(result.file)
+                        //             // this.setState({image : result.uri})
+                        //             // await this.store_to_redux(result.uri)
+                        //         }
+                        //       } catch (E) {
+                        //         console.log(E);
+                        //       }
+
+                        // }},
                         {icon : 'video-camera' , label : 'Send video' ,  onPress : async ()=>{
                             const { status } = await Permissions.askAsync(Permissions.CAMERA_ROLL);
                             if (status === "granted"){
@@ -629,6 +917,8 @@ class Chats_screen extends Component {
                                 });
                                 if (!result.cancelled) {
                                   this.setState({ image: result.uri });
+                                //   const info = await FileSystem.getInfoAsync(result.uri)
+                                //   console.log(info.size)
                                   await this.store_to_redux(result.uri)
                                   
                                 }
@@ -688,94 +978,102 @@ class Chats_screen extends Component {
                         this.setState({ message : text  })
                     
                     }
-                } inlineImageLeft = 'splashscreen_image'  value = {this.state.message} style = {styles.input} multiline = {true} placeholder = {"       Enter Message "} />
+                }  value = {this.state.message} style = {styles.input} multiline = {true} placeholder = {"       Enter Message "} />
                 <TouchableOpacity onPress = {
-                    async () => {
-                        if (this.props.state.fun.Connected){
-                            // Saving the message in the redux store
-                            if (this.state.current_index === 0 || this.state.current_index){
-                                this.props.send_message( this.state.current_index ,  {
+                   async () => {
+                    if (this.state.message){
+                         // if (this.props.state.fun.Connected){
+                        // Saving the message in the redux store
+                    if (this.state.current_index === 0 || this.state.current_index){
+                        this.props.send_message( this.state.current_index ,  {
+                            'id' : 'Not saved',
+                            'Contact' : this.state.Contact,
+                            'Message' : this.state.message,
+                            'Receiving' : false,
+                            'Date' : new Date().toString(),
+                            'Status' : 'first-tym',
+                            'Server_id' : Server_id,
+                            'Starred' : false,
+                            'Type' : 'text',
+                            'Muk' : this.message_unique_token_generator(),
+                            'Seen' : true
+                        });
+                        this.props.update_chat_position(Server_id)
+                        
+                    } else {
+                        let info = {
+                            'Server_id' : Server_id,
+                            'Name' : Name,
+                            'Contact_name' : '@unknown',
+                            'Messages' : [
+                                { 
                                     'id' : 'Not saved',
                                     'Contact' : this.state.Contact,
                                     'Message' : this.state.message,
                                     'Receiving' : false,
                                     'Date' : new Date().toString(),
-                                    'status' : 'Not delivered',
+                                    'Status' : 'first-tym',
+                                    'Starred' : false,
                                     'Server_id' : Server_id,
                                     'Type' : 'text',
-                                });
-                                this.props.update_chat_position(Server_id)
-                                
-                            } else {
-                                let info = {
-                                    'Server_id' : Server_id,
-                                    'Name' : Name,
-                                    'Contact_name' : '@unknown',
-                                    'Messages' : [
-                                        { 
-                                            'id' : 'Not saved',
-                                            'Contact' : this.state.Contact,
-                                            'Message' : this.state.message,
-                                            'Receiving' : false,
-                                            'Date' : new Date().toString(),
-                                            'Status' : 'Not delivered',
-                                            'Server_id' : Server_id,
-                                            'Type' : 'text'
-                                        }
-                                    ]
+                                    'Muk' : this.message_unique_token_generator(),
+                                    'Seen' : true
                                 }
-                                let index = this.props.state.fun.Messages.length 
-                                this.props.send_message_new(info)
-                                //console.log(info)
-                                this.props.create_new_chat_position({
-                                    'Server_id' : Server_id,
-                                    'index' : index,
-                                })
-                                this.setState({current_index : index })
-                            }
-
-                            //Sending the message to the receiver
-                            await Chat.sendMessage({
-                                'type' : 'Message',
-                                'Receiver' : Server_id,
-                                'Sender' : this.props.state.fun.Fun_profile.Server_id,
-                                'Name' : this.props.state.fun.Fun_profile.Name,
-                                'Contact' : this.props.state.fun.Fun_profile.Contact,
-                                'Message' : this.state.message,
-                                'forwarded' : false,
-                                'Starred' : false,
-                                'Replied' : this.state.reply ? this.state.selected_message.Message.Message : 'null',
-                                'Type' : 'text'
-
-                            })
-                            // Clearing the textinput for more  input
-                            //Storing the message in the database
-                            await fun_database.store_message_db({
-                                'Contact' : this.state.Contact,
-                                'Message' : this.state.message,
-                                'Status' : 'Sent',
-                                'Date' : new Date().toString(),
-                                'Receiving' : false,
-                                'Server_id' : Server_id,
-                                'forwarded' : false,
-                                'Starred' : false,
-                                'Replied' : this.state.reply ? this.state.selected_message.Message.Message : 'null',
-                                'Type' : 'text'
-                            })
-                            this.setState({ message : ''})
-                            if (this.state.reply){
-                                this.setState({ reply_animation : false })
-                                setTimeout(()=>{
-                                    this.setState({reply : false , reply_animation : true})
-                                }, 1500)
-                            }
-                            //this.message = ''
-                            //this.messo_flatlist.scrollToEnd()
-                        } else {
-                            alert('Please ensure you have a stable Internet connection before sending the message')
+                            ]
                         }
-                        
+                        let index = this.props.state.fun.Messages.length 
+                        this.props.send_message_new(info)
+                        //console.log(info)
+                        this.props.create_new_chat_position({
+                            'Server_id' : Server_id,
+                            'index' : index,
+                        })
+                        this.setState({current_index : index })
                     }
+
+                        //Sending the message to the receiver
+                        // await Chat.sendMessage({
+                        //     'type' : 'Message',
+                        //     'Receiver' : Server_id,
+                        //     'Sender' : this.props.state.fun.Fun_profile.Server_id,
+                        //     'Name' : this.props.state.fun.Fun_profile.Name,
+                        //     'Contact' : this.props.state.fun.Fun_profile.Contact,
+                        //     'Message' : this.state.message,
+                        //     'forwarded' : false,
+                        //     'Starred' : false,
+                        //     'Replied' : this.state.reply ? this.state.selected_message.Message.Message : 'null',
+                        //     'Type' : 'text'
+
+                        // })
+                        // Clearing the textinput for more  input
+                        //Storing the message in the database
+                        // await fun_database.store_message_db({
+                        //     'Contact' : this.state.Contact,
+                        //     'Message' : this.state.message,
+                        //     'Status' : 'Sent',
+                        //     'Date' : new Date().toString(),
+                        //     'Receiving' : false,
+                        //     'Server_id' : Server_id,
+                        //     'forwarded' : false,
+                        //     'Starred' : false,
+                        //     'Replied' : this.state.reply ? this.state.selected_message.Message.Message : 'null',
+                        //     'Type' : 'text'
+                        // })
+                        this.setState({ message : ''})
+                        if (this.state.reply){
+                            this.setState({ reply_animation : false })
+                            setTimeout(()=>{
+                                this.setState({reply : false , reply_animation : true})
+                            }, 1500)
+                        }
+                        //this.message = ''
+                        //this.messo_flatlist.scrollToEnd()
+                    // } else {
+                    //     alert('Please ensure you have a stable Internet connection before sending the message')
+                    // }
+                 
+                    }   
+                }
                 } >
                     <Avatar containerStyle = {{elevation : 5 , backgroundColor : this.props.state.fun.Layout_Settings.Icons_Color }} rounded size = {'small'} icon = {{name : 'send', color : this.props.state.fun.Layout_Settings.Icons_surroundings, type : 'font-awesome'}}/>
                 </TouchableOpacity>
@@ -792,6 +1090,9 @@ class Chats_screen extends Component {
                     <Avatar containerStyle = {{elevation : 5 , backgroundColor : this.props.state.fun.Layout_Settings.Icons_Color }} rounded size = {'small'} icon = {{name : this.state.action_opener, color :this.props.state.fun.Layout_Settings.Icons_surroundings, type : 'font-awesome'}}/>
                 </TouchableOpacity>
             </View>
+
+          
+          
             {
                 this.state.reply ? (
                     <Animatable.View 
@@ -835,7 +1136,7 @@ let mapDispatchToProps = (dispatch,ownProps) => ({
     create_new_chat_position : (Values) => dispatch({ type : 'new_chats_position' , New : Values }),
     update_chat_position : (Server_id) => dispatch({type : 'update_chats_positions' , Server_id : Server_id }),
     delete_message : (Index , message_index) => dispatch({ type : 'delete_message' , Index : Index  , message_Index : message_index }),
-
+    star_message : (Index , messo_index , value) => dispatch({ type : 'star_message' , Index : Index , messo_index : messo_index , value : value })
 })
 
 
@@ -882,7 +1183,9 @@ const styles = StyleSheet.create({
         borderRadius : 20,
         elevation : 5,
         fontWeight : '700',
-        fontSize : 16
+        fontSize : 16,
+        paddingLeft : 20,
+        paddingRight : 20
     },
     dial : {
          

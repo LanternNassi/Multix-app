@@ -73,7 +73,7 @@ export class fun extends Component {
                 console.log(this.props.state.fun.Contacts)
                 fun_database.update_db_connes(this.props.state.fun.Contacts , contacts)
             }
-        },1000)
+        },3000)
     }
 
     componentDidMount(){
