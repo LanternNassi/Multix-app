@@ -37,7 +37,7 @@ export const Fun_3 = (props) => {
 
             <View style = {styles.input_container}>
             <View style = {styles.header}>
-            <Avatar icon = {{ name : 'cloud-upload' , type : 'fontawesome' , size : 40 , color : props.state.fun.Layout_Settings.Icons_Color }} size = {'medium'} />
+            <Avatar  source = {require('../assets/Notifications.png')} rounded size = {'medium'} />
                 <Text style = {styles.Header_text}>
                     This will help us know you more ....
                 </Text>

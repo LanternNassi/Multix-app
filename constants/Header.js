@@ -22,7 +22,7 @@ export function Header(props){
                         <TouchableOpacity onPress = {
                             async () => {
                                 const options = {
-                                    message : 'Check out the multix App . A cross platform messaging app and business oriented at https://www.MultixApp.com',
+                                    message : 'Check out the multix App . A cross platform messaging app and business oriented at https://play.google.com/store/apps/details?id=com.lantern.Multix',
                                   };
                                 let sharing_possible = await Sharing.isAvailableAsync()
                                 if (sharing_possible){

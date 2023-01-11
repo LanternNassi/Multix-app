@@ -30,6 +30,7 @@ export class App extends React.Component {
  
 
   async componentDidMount() {
+   
     await this.downloadAssets()
   }
 
@@ -374,7 +375,7 @@ async downloadAssets(){
           await this.prepareResources();
         }
   } else if (dir.exists && fun_dir.exists) {
-    //If dir exists meaning that the databases already exist 
+    //If dir exists meaning that the databases already exist t
         //console.log('Folder exists . Proceeding...')
         await this.performAPICalls();
         await this.prepareResources();

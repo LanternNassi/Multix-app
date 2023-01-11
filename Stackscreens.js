@@ -47,6 +47,8 @@ import Fun_3 from './Fun_startup_screens/Screen_3'
 import Fun_4 from './Fun_startup_screens/Screen_4.js'
 import Sign_in from './Fun_startup_screens/Sign_in.js'
 import WelcomeFun from './Fun_startup_screens/WelcomeFun.js'
+import Forgot_password from './Fun_startup_screens/Forgot_password.js'
+
 
 //Fun FAB screens 
 import Chats_FAB from './components/Lets_connect_FAB_screens/Chats_FAB.js'
@@ -257,6 +259,11 @@ function Stackscreens(props) {
           {
             !props.fun.app_started ? (
               <Stack.Screen name = 'Personal info' component = {Fun_1} options = {{ headerShown : true }}/>
+            ) : (console.log())
+          }
+          {
+            !props.fun.app_started ? (
+              <Stack.Screen name = "Reset Password" component = {Forgot_password} options = {{ headerShown : true }} />
             ) : (console.log())
           }
           {

@@ -37,9 +37,16 @@ export const Picture = (props) => {
                     if(props.state.fun.Messages[i].Server_id == props.Server_id){
                         for(let p = 0; p<props.state.fun.Messages[i]['Messages'].length; p++){
                           if (props.state.fun.Messages[i]['Messages'][p]['Muk'] == props.Muk){
-                            props.update_seen(i , p )
-                            await fun_database.update_seen_status_message(props.Muk)
-                            break
+                            await fun_database.store_received_media(props.image_uri , 'image').then(async(resource)=>{
+                                props.update_seen(i , p )
+                                props.update_url(i , resource , p)
+                                props.update_Status(i , p , 'delivered')
+                                await fun_database.update_seen_status_message(props.Muk)
+                                await fun_database.replace_url_database(props.Muk , resource)
+                                await fun_database.update_status_message(props.Muk , 'delivered')
+                                // break
+                            })
+                            
                           } 
                         } 
                     }
@@ -174,7 +181,7 @@ export const Picture = (props) => {
         }>
             <Image source = {{ uri : props.image_uri }} style = {styles.image}/>
             {
-                (progress >= 1 || props.Status == 'sent' || props.Status == 'delivered')  ?(
+                (progress >= 1 || props.Status == 'sent')  ?(
                     <Avatar rounded style = {styles.play} icon = {{ name : 'music' , type : 'font-awesome' , color : 'white' }} size = {'large'} />
                 ) : (
                     <Progress.CircleSnail  size = { 60 } progress = {progress} color = {'white'} style = { styles.play }/>
@@ -201,7 +208,10 @@ const mapStateToProps = (state) => {
 const mapDispatchToProps = (dispatch) => ({
     // notify_status : (Index , messo_index) => dispatch({ type : 'after_upload_download' , Index : Index , messo_index : messo_index }),
     message_confirmation : (Index , messo_index , status) => dispatch({type : 'message_confirmation' , Index : Index , messo_index : messo_index , status : status }),
-    update_seen : (Index , messo_index) => dispatch({type : 'update_seen' , Index : Index , messo_index : messo_index})
+    update_seen : (Index , messo_index) => dispatch({type : 'update_seen' , Index : Index , messo_index : messo_index}),
+    update_url : (Index , url , messo_index) => dispatch({type : 'update_url' , url : url , Index : Index , messo_index : messo_index}),
+    update_Status : (Index , messo_index , Status) => dispatch({type : '' ,  Index : Index , messo_index : messo_index , Status : Status})
+
 })
 
 

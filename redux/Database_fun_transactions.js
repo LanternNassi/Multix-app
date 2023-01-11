@@ -336,6 +336,16 @@ static async store_received_media(url , type){
     return fun_media + url.split('/').pop()
 }
 
+static async replace_url_database(Muk , url){
+    const db = SQLite.openDatabase('Fun_database.db')
+    db.transaction((tx)=>{
+        tx.executeSql('UPDATE Messages SET Message=? WHERE Muk=?',
+        [url , Muk],(tx , result)=>{},(error)=>{})
+    },(error)=>{},()=>{})
+}
+
+
+
 static async update_message_progress(Muk , progress){
     const db = SQLite.openDatabase('Fun_database.db')
     db.transaction((tx)=>{
@@ -348,6 +358,13 @@ static async update_seen_status_message(Muk){
     const db = SQLite.openDatabase('Fun_database.db')
     db.transaction((tx)=>{
         tx.executeSql('UPDATE Messages SET Seen=? WHERE Muk=?' , [true , Muk])
+    },(error)=>{},()=>{})
+}
+
+static async update_status_message(Muk , Status){
+    const db = SQLite.openDatabase('Fun_database.db')
+    db.transaction((tx)=>{
+        tx.executeSql('UPDATE Messages SET Status=? WHERE Muk=?' , [Status , Muk])
     },(error)=>{},()=>{})
 }
 

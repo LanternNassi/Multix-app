@@ -211,6 +211,18 @@ export default FunReducer = (state = {
                 ...state
             }
         }
+        case 'update_url' : {
+            state['Messages'][action.Index]['Messages'][action.messo_index]['Message'] = action.url
+            return {
+                ...state
+            }
+        }
+        case 'update_status' : {
+            state['Messages'][action.Index]['Messages'][action.messo_index]['Status'] = action.Status
+            return {
+                ...state
+            }
+        }
        
         
         default :

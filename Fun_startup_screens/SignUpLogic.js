@@ -43,7 +43,7 @@ export class fun_sign_up {
       // let new_profile_pic_uri = await this.storing_profile_pic_to_folder(this.profile_picture)
         let data = [
             db_info.Name , db_info.Password , db_info.Contact , db_info.Email , 
-            db_info.Birth_date , db_info.Sign_up_date , db_info.Nickname , this.profile_picture.uri,
+            db_info.Birth_date , db_info.Sign_up_date , db_info.Nickname , this.profile_picture ? this.profile_picture.uri : null,
             db_info.Hobby , db_info.Residence , db_info.Notifications_token , db_info.Multix_token , db_info.id
         ]
         console.log(data)

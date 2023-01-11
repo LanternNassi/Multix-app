@@ -1,6 +1,6 @@
 import React , {Component, Children} from 'react'
 import {SpeedDial, Avatar } from 'react-native-elements'
-import {View , Text , TextInput , Image , Button , StyleSheet, TouchableOpacity , ScrollView, Animated , FlatList,ImageBackground} from 'react-native'
+import {View , Text , TextInput , Image , Button , StyleSheet, TouchableOpacity , ScrollView, Animated , FlatList,ImageBackground , } from 'react-native'
 import { ScreenWidth, ScreenHeight } from 'react-native-elements/dist/helpers';
 import {connect} from 'react-redux'
 import * as Animatable from 'react-native-animatable';
@@ -11,7 +11,18 @@ import Asset from 'expo-asset'
 import * as Progress from 'react-native-progress'
 import Slider from '@react-native-community/slider'
 import * as Permissions from 'expo-permissions';
+import { StatusBar } from 'expo-status-bar';
+// import MusicControl from 'react-native-music-control'
+// import TrackPlayer from 'react-native-track-player';
 
+// const ScreenWidth = Dimensions.get('window').width
+// const ScreenHeight = Dimensions.get('window').height 
+
+// const ScreenWidth = 100
+// const ScreenHeight = 500
+
+console.log(ScreenWidth)
+console.log(ScreenHeight)
 
 
 const bottomsheet = {
@@ -136,8 +147,9 @@ export class tools extends Component {
     }
     get_Video_Files = async () => {
         try {
-        let video = await MediaLibrary.getAssetsAsync({mediaType : 'video' , first : 580 });
-        console.log('video....')
+        let video = await MediaLibrary.getAssetsAsync({mediaType : 'video' , first : 300 });
+
+        console.log(video)
         const {assets,totalCount} = video
         const processed_assets = []
         for(let i = 0 ; i<=assets.length-1; i++ ){
@@ -317,6 +329,24 @@ export class tools extends Component {
         }
         
     }
+
+    // update_notification_music_controls = async () =>{
+    //     MusicControl.setNowPlaying({
+    //         title: this.state.current_audio_song + '...',
+    //         artwork: require('../assets/Notifications.png'), // URL or RN's image require()
+    //         artist: 'Michael Jackson',
+    //         // album: 'Thriller',
+    //         // genre: 'Post-disco, Rhythm and Blues, Funk, Dance-pop',
+    //         duration: this.state.current_max_time, // (Seconds)
+    //         description: '', // Android Only
+    //         color: 0xffffff, // Android Only - Notification Color
+    //         colorized: true, // Android 8+ Only - Notification Color extracted from the artwork. Set to false to use the color property instead
+    //         // date: '1983-01-02T00:00:00Z', // Release Date (RFC 3339) - Android Only
+    //         rating: 84, // Android Only (Boolean or Number depending on the type)
+    //         notificationIcon: 'Notifications', // Android Only (String), Android Drawable resource name for a custom notification icon
+    //         isLiveStream: true, // iOS Only (Boolean), Show or hide Live Indicator instead of seekbar on lock screen for live streams. Default value is false.
+    //     })
+    // }
     async componentDidMount() {
         //await Audio.setAudioModeAsync({
             //staysActiveInBackground : true,
@@ -328,22 +358,92 @@ export class tools extends Component {
         const {status} = await MediaLibrary.getPermissionsAsync();
         console.log(status)
         if (status === "granted"){
-           // await this.get_Video_Files();
             await this.get_Audio_Files();
+            await this.get_Video_Files();
          } else {
             const {status} = await MediaLibrary.requestPermissionsAsync();
             if (status === "granted"){
                 await this.get_Audio_Files()
-               // await this.get_Video_Files();
+               await this.get_Video_Files();
             }
-        }  
+        } 
+        // await TrackPlayer.setupPlayer()
+        
+        ////Music control commands
+
+        // MusicControl.enableControl('closeNotification', true, { when: 'paused' })
+
+        // MusicControl.enableBackgroundMode(true);
+
+        // // setting controls on lock screen
+        // MusicControl.enableControl('play', true)
+        // MusicControl.enableControl('pause', true)
+        // MusicControl.enableControl('stop', false)
+        // MusicControl.enableControl('nextTrack', true)
+        // MusicControl.enableControl('previousTrack', false)
+
+
+        // MusicControl.handleAudioInterruptions(true);
+
+        // MusicControl.on(Command.play, async ()=> {
+        //     if (this.state.type_playing === 'audio'){
+        //         this.setState({playing : 'playing'})
+        //         await this.state.soundObject.playAsync()
+        //     } else if (this.state.type_playing === 'video'){
+        //         this.setState({playing : 'playing'})
+        //         await this.video_ref.playAsync()
+        //     }
+            
+        // })
+
+        // MusicControl.on(Command.pause, async ()=> {
+        //     if (this.state.type_playing === 'audio'){
+        //         this.setState({playing : 'paused'})
+        //         await this.state.soundObject.pauseAsync()
+        //     } else if (this.state.type_playing === 'video'){
+        //         this.setState({playing : 'paused'})
+        //         await this.video_ref.pauseAsync()
+        //     }
+        // })
+
+        // MusicControl.on(Command.stop, async ()=> {
+        //     if (this.state.type_playing === 'audio'){
+        //         this.setState({playing : 'paused'})
+        //         await this.state.soundObject.pauseAsync()
+        //     } else if (this.state.type_playing === 'video'){
+        //         this.setState({playing : 'paused'})
+        //         await this.video_ref.pauseAsync()
+        //     }       
+        //  })
+
+        // MusicControl.on(Command.nextTrack, async ()=> {
+        //     async ()=>{
+        //         const id = this.state.current_song_id 
+        //         await this.state.soundObject.unloadAsync()
+        //         await this.play_next(id)
+        //     }
+        // })
+
+        // MusicControl.on(Command.previousTrack, async ()=> {
+        //     async ()=>{
+        //         const id = this.state.current_song_id
+        //         await this.state.soundObject.unloadAsync()
+        //         await this.play_previous(id)
+        //     }      
+        // })
+
+        // MusicControl.on(Command.closeNotification, ()=> {
+        //     console.log('closed')
+        // })
     
     }
     render(){
         return (
             <View style = {styles.container} >
+                <StatusBar style="dark" animated = {true}/>
                 <View style = {styles.header}>
                     <View style = {styles.O_V} >
+
                         <TouchableOpacity style = {styles.T_O}
                         onPress = {
                             ()=>{
@@ -433,7 +533,7 @@ export class tools extends Component {
                         
                 </View> 
                 <View style = {{ width : ScreenWidth ,  height : 0.15 * ScreenHeight  , marginTop : 20 , flexDirection : 'row', justifyContent : 'space-evenly', alignItems : 'center'  }}>
-                    <TouchableOpacity onPress = {
+                    <TouchableOpacity style = {styles.encloser_2} onPress = {
                         async ()=>{
                             if(this.state.looping){
                                 this.setState({ loop_color :[ this.props.fun.Layout_Settings.Icons_surroundings , this.props.fun.Layout_Settings.Icons_Color ] , looping : false })
@@ -456,7 +556,7 @@ export class tools extends Component {
                         <Text style = {{ fontSize : 15 , fontWeight : '900' }} > Audio </Text>
 
                     </View>
-                    <TouchableOpacity onPress = {
+                    <TouchableOpacity style = {styles.encloser_2} onPress = {
                         async ()=>{
                             await this.state.soundObject.unloadAsync()
                             await this.play_Random(this.state.audio_files.length-1)
@@ -482,17 +582,18 @@ export class tools extends Component {
 
                 </View>
                 <View style = {{ height : 0.2 * ScreenHeight, width : ScreenWidth , flexDirection : 'row' , justifyContent : 'space-around', alignItems : 'center'  }}>
-                    <TouchableOpacity onPress = {
+                    <TouchableOpacity style = {styles.encloser_2} onPress = {
                         async ()=>{
                             const id = this.state.current_song_id
                             await this.state.soundObject.unloadAsync()
                             await this.play_previous(id)
+                            // await this.update_notification_music_controls()
                         }
                     }>
-                        <Avatar rounded containerStyle = {{ backgroundColor : this.props.fun.Layout_Settings.Icons_surroundings , elevation : 18  }} icon = {{ name : 'fast-backward' , color : this.props.fun.Layout_Settings.Icons_Color , type : 'font-awesome'  }} size = {'medium'}  />
+                        <Avatar rounded  containerStyle = {{ backgroundColor : this.props.fun.Layout_Settings.Icons_surroundings , elevation : 18  }} icon = {{ name : 'fast-backward' , color : this.props.fun.Layout_Settings.Icons_Color , type : 'font-awesome' ,  }} size = {'medium'}  />
                     </TouchableOpacity>
 
-                    <TouchableOpacity onPress = {
+                    <TouchableOpacity style = {styles.encloser_2} onPress = {
                         async ()=>{
                             if (this.state.type_playing === 'video'){
                                 await this.video_ref.presentFullscreenPlayerAsync()
@@ -503,11 +604,16 @@ export class tools extends Component {
                     </TouchableOpacity>
 
 
-                    <TouchableOpacity onPress = {
+                    <TouchableOpacity style = {
+                        styles.encloser_1
+                    } onPress = {
                         async ()=> {
                             if (this.state.playing === "playing"){
                                 if (this.state.type_playing === 'audio'){
                                     this.setState({playing : 'paused'})
+                                    // MusicControl.updatePlayback({
+                                    //     // state : MusicControl.STATE_PAUSED,
+                                    // })
                                     await this.state.soundObject.pauseAsync()
                                 } else if (this.state.type_playing === 'video'){
                                     this.setState({playing : 'paused'})
@@ -517,6 +623,9 @@ export class tools extends Component {
                             }else if (this.state.playing === "paused"){
                                 if (this.state.type_playing === 'audio'){
                                     this.setState({playing : 'playing'})
+                                    // MusicControl.updatePlayback({
+                                    //     // state : MusicControl.STATE_PLAYING,
+                                    // })
                                     await this.state.soundObject.playAsync()
                                 } else if (this.state.type_playing === 'video'){
                                     this.setState({playing : 'playing'})
@@ -526,14 +635,17 @@ export class tools extends Component {
                             
                         }
                     }>
-                    <Avatar rounded containerStyle = {{ backgroundColor : this.props.fun.Layout_Settings.Icons_surroundings , elevation : 18  }} icon = {{ name : this.state.playing === 'playing' || this.state.playing === "No"? 'pause':'play' , color : this.props.fun.Layout_Settings.Icons_Color , type : 'font-awesome'  }} size = {'large'}  />
+                    <Avatar rounded containerStyle = {{ backgroundColor : this.props.fun.Layout_Settings.Icons_surroundings , elevation : 18 }} icon = {{ name : this.state.playing === 'playing' || this.state.playing === "No"? 'pause':'play' , color : this.props.fun.Layout_Settings.Icons_Color , type : 'font-awesome'  }} size = {'large'}  />
                     </TouchableOpacity>
 
 
-                    <TouchableOpacity onPress = {
+                    <TouchableOpacity style = {
+                        styles.encloser_2
+                    } onPress = {
                         async ()=>{
                             if (this.state.playing === "playing" && !this.state.muted){
                                 if (this.state.type_playing === 'audio'){
+                                    
                                     this.setState({muted : true})
                                     await this.state.soundObject.setIsMutedAsync(true)
                                 } else if (this.state.type_playing === 'video'){
@@ -555,11 +667,13 @@ export class tools extends Component {
                     </TouchableOpacity>
 
 
-                    <TouchableOpacity onPress = {
+                    <TouchableOpacity style = {styles.encloser_2} onPress = {
                         async ()=>{
                             const id = this.state.current_song_id 
                             await this.state.soundObject.unloadAsync()
                             await this.play_next(id)
+                            // await this.update_notification_music_controls()
+
                         }
                     }>
                     <Avatar rounded containerStyle = {{ backgroundColor : this.props.fun.Layout_Settings.Icons_surroundings , elevation : 18  }} icon = {{ name : 'fast-forward' , color : this.props.fun.Layout_Settings.Icons_Color , type : 'font-awesome'  }} size = {'medium'}  />
@@ -611,6 +725,7 @@ export class tools extends Component {
                                          setTimeout(()=>{
                                          this.setState({audio_sheet : false , unfold : bottomsheet,audio_files_flatlist : this.state.audio_files.assets})
                                      }, 1000)
+                                    //  await this.update_notification_music_controls()
                                      }
                                  } >
                                      <Avatar source = {{uri : this.state.audio_thumbnail}} rounded size = {'medium'} />
@@ -745,16 +860,17 @@ const styles = StyleSheet.create({
           justifyContent :'center',
            backgroundColor : 'white',
             alignItems : 'center' , 
-        elevation : 5
+        elevation : 20
 
     },
     O_V : {
-        height : 62 ,
-         width : 62, 
-         borderRadius : 31 ,
-          elevation : 5 , 
+        height : 69 ,
+         width : 69, 
+         borderRadius : (0.5 * 69) ,
+          elevation : 20 , 
           justifyContent : 'center', 
-          alignItems : 'center'
+          alignItems : 'center',
+          backgroundColor : 'white'
 
     },
     header_title : {
@@ -768,5 +884,23 @@ const styles = StyleSheet.create({
         width : ScreenWidth,
         height : 50,
         backgroundColor : 'transparent'
+    },
+    encloser_2 : {
+        width : 0.165 * ScreenWidth,
+        height : 0.165 * ScreenWidth,
+        justifyContent : 'center',
+        alignItems : 'center',
+        backgroundColor : 'white',
+        borderRadius : 0.5 * (0.165 * ScreenWidth),
+        elevation : 20
+    },
+    encloser_1 : {
+        width : 0.24 * ScreenWidth,
+        height : 0.24 * ScreenWidth,
+        justifyContent : 'center',
+        alignItems : 'center',
+        backgroundColor : 'white',
+        borderRadius : 0.5 * (0.24 * ScreenWidth),
+        elevation : 20
     }
 })

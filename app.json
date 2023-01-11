@@ -3,13 +3,14 @@
     "name": "Multix",
     "slug": "Multix",
     "version": "1.0.0",
-    "orientation": "portrait",
-    "icon": "./assets/Notifications.png",
+    "orientation": "Portrait",
+    "icon": "",
     "plugins": [
+      "@notifee/react-native",
       [
         "expo-notifications",
         {
-          "icon": "./assets/Notifications.png",
+          "icon": "",
           "mode": "production",
           "color": "#000000"
         }
@@ -19,12 +20,13 @@
         {
           "photosPermission": "Allow $(PRODUCT_NAME) to access your photos.",
           "savePhotosPermission": "Allow $(PRODUCT_NAME) to save photos.",
-          "isAccessMediaLocationEnabled": true
+          "isAccessMediaLocationEnabled": "true"
         }
       ]
+     
     ],
     "splash": {
-      "image": "./assets/Notifications.png",
+      "image": "",
       "resizeMode": "contain",
       "backgroundColor": "#000000"
     },
@@ -39,8 +41,9 @@
       "bundleIdentifier": "com.lantern.Multix"
     },
     "android": {
+      "permissions": ["FOREGROUND_SERVICE"],
       "adaptiveIcon": {
-        "foregroundImage": "./assets/Notifications.png",
+        "foregroundImage": "",
         "backgroundColor": "#0000000"
       },
       "googleServicesFile": "./google-services.json",

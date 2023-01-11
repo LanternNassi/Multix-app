@@ -167,6 +167,54 @@ export default class SignInLogic {
         },(error)=>{},()=>{})
     }
 
+    static async send_otp(username , Debug , finisher){
+      
+        axios({
+          method : 'POST',
+          url : (Debug) ? ('http://192.168.43.232:8040/Give_otp/') : ('https://multix-fun.herokuapp.com/Give_otp'),
+          data : {'username' : username},
+          // timeout : 100000,
+          headers : { 
+            'content-type' : 'application/json',
+        }
+        }).then(async(response)=>{
+          console.log(response)
+          if (response.status == 200){
+              finisher(response.data['OTP'])
+              console.log(response.data['OTP'])
+            // let matched_data = fun_database.online_chats(response_online.data , response.data)
+            // this.props.store_online_chats(matched_data)
+          }
+        },()=>{
+
+        })
+    }
+
+    static async verify_otp(username , otp , Debug , finisher){
+        axios({
+          method : 'POST',
+          url : (Debug) ? ('http://192.168.43.232:8040/Validate_otp/') : ('https://multix-fun.herokuapp.com/Validate_otp'),
+          data : {'username' : username , 'otp' : otp },
+          // timeout : 100000,
+          headers : { 
+            'content-type' : 'application/json',
+        }
+        }).then(async(response)=>{
+          console.log(response)
+          if (response.status == 200){
+              finisher()
+              // console.log(response.data['OTP'])
+            // let matched_data = fun_database.online_chats(response_online.data , response.data)
+            // this.props.store_online_chats(matched_data)
+          }
+        },()=>{
+
+        })
+
+    }
+
+    
+
     static async initialize_onesignal(){
     //OneSignal Init Code
       OneSignal.setLogLevel(6, 0);

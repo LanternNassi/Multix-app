@@ -30,18 +30,20 @@ export class Chats_FAB extends Component {
             <View style = {{ flex : 1 }}>
                 <View style = {styles.header}>
                     <Text style = {styles.header_title}>
-                        Pick a contact from the list to chat with ...
+                        Connected Chats
                     </Text>
                 </View>
+                {/* <View style = {styles.divider}/> */}
+
                 <FlatList 
                     style = {styles.list}
                     data = {
                        this.props.state.fun.Contacts
                     }
                     horizontal = {false}
-                    ItemSeparatorComponent = {()=>(
-                        <View style = {styles.divider}/>
-                    )}
+                    // ItemSeparatorComponent = {()=>(
+                    //     <View style = {styles.divider}/>
+                    // )}
                     contentContainerStyle = {styles.containerstyle}
                     ListEmptyComponent = { () => (
                         <View style = {styles.empty_container} >

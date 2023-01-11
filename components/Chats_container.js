@@ -139,9 +139,10 @@ export class Chats_container extends Component {
                             style = {styles.item}
                             >
                                     <ListItem.Content style = {styles.arranger}>
-                                        <SkeletonContent isLoading = {chat ? (false) : (true)} animationDirection = {'diagonalTopRight'} animationType = {'shiver'} containerStyle = {styles.arranger } layout = {[
+                                        <SkeletonContent isLoading = {(this.props.state.fun.Contacts === [] || this.props.state.fun.Contacts) ? (false):(true)} animationDirection = {'diagonalTopRight'} animationType = {'shiver'} containerStyle = {styles.arranger } layout = {[
                                             {key : 'pic ' , height : 50 , width : 50 , borderRadius : 25} ,
                                             {key : 'title' , left : 10, height : 10 , width : 110},
+
                                         ]} >
                                             <TouchableOpacity onPress = {()=>{
                                                 console.log('pressed')

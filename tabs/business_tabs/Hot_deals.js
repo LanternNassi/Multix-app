@@ -83,12 +83,12 @@ export  function Hot_deals(props) {
         
             <View style = {styles.container} >
             <Image source = {require('.././../assets/giphy.gif')} style = {styles.bg} /> 
-            <View style = {{ position : 'absolute', paddingTop : ScreenHeight-800 }}>
+            <View style = {{ position : 'absolute', Top : 0.01 * ScreenHeight }}>
                 <Animatable.Text  style = {styles.welcoming_text}> We have what you are looking for.</Animatable.Text>
                 <Animatable.Text style = {styles.welcoming_text} >Just accept and register with us</Animatable.Text>
                 <Animatable.Text  style = {styles.welcoming_text}>You wont regret.</Animatable.Text>  
             </View>
-            <View style = {{ paddingTop : ScreenHeight-500 , position : 'absolute' }}>
+            <View style = {{ paddingTop : 0.2 * ScreenHeight , position : 'absolute' }}>
             <Button title = {'Continue with us'} onPress = {
                 ()=>{
                     props.state.navigation.navigation.navigate("Welcome Information")

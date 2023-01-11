@@ -26,7 +26,7 @@ export function Header_business(props){
                     <View style = {{ flexDirection : 'row' , justifyContent : 'space-around' , alignItems : 'center' , flex:1.5 }}>
                         <TouchableOpacity onPress = {async ()=>{
                             const options = {
-                                message : 'Check out the multix App . A cross platform messaging  and business oriented app at https://www.MultixApp.com',
+                                message : 'Check out the multix App . A cross platform messaging  and business oriented app at https://play.google.com/store/apps/details?id=com.lantern.Multix',
                             };
                             let sharing_possible = await Sharing.isAvailableAsync()
                             if (sharing_possible){

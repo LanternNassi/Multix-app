@@ -39,8 +39,8 @@ export function MyTabs(props) {
   
             //Defining the on message handler for the chat websockets 
             Chat.onMessage(async (Message)=>{
-              
               var message = JSON.parse(Message.data)
+            
               if (message['type'] == 'Receive_Message'){
                 console.log(message)
                 if (props.state.fun.Fun_profile.Server_id !== message['From'] ){
@@ -85,38 +85,72 @@ export function MyTabs(props) {
   
                       } else {
                         //Then if it is not text and known to our redux store
-                        await fun_database.store_received_media(message['Message'] , message['Type']).then(async(resource)=>{
-                          await fun_database.store_message_db({
-                            'Contact' : message['Contact'],
-                            'Message' : resource,
-                            'Status' : 'delivered',
-                            'Date' : new Date().toString(),
-                            'Receiving' : true,
-                            'Server_id' : message['From'],
-                            'forwarded' : message['forwarded'],
-                            'Starred' : false,
-                            'Replied' : message['Replied'],
-                            'Type' : message['Type'],
-                            'Muk' : message['Muk'],
-                            'Seen' : false,
-                          })
-                          props.send_message(index , {
-                            'id' : 'Not saved',
-                            'Message' : resource,
-                            'Receiving' : true,
-                            'Contact' : message['Contact'],
-                            'Date' : new Date().toString(),
-                            'Status' : 'delivered',
-                            'Server_id' : message['From'],
-                            'forwarded' : message['forwarded'],
-                            'Starred' : false,
-                            'Replied' : message['Replied'],
-                            'Type' : message['Type'],
-                            'Muk' : message['Muk'],
-                            'Seen' : false
-                        });
+                        // await fun_database.store_received_media(message['Message'] , message['Type']).then(async(resource)=>{
+                        //   await fun_database.store_message_db({
+                        //     'Contact' : message['Contact'],
+                        //     'Message' : resource,
+                        //     'Status' : 'delivered',
+                        //     'Date' : new Date().toString(),
+                        //     'Receiving' : true,
+                        //     'Server_id' : message['From'],
+                        //     'forwarded' : message['forwarded'],
+                        //     'Starred' : false,
+                        //     'Replied' : message['Replied'],
+                        //     'Type' : message['Type'],
+                        //     'Muk' : message['Muk'],
+                        //     'Seen' : false,
+                        //   })
+                        //   props.send_message(index , {
+                        //     'id' : 'Not saved',
+                        //     'Message' : resource,
+                        //     'Receiving' : true,
+                        //     'Contact' : message['Contact'],
+                        //     'Date' : new Date().toString(),
+                        //     'Status' : 'delivered',
+                        //     'Server_id' : message['From'],
+                        //     'forwarded' : message['forwarded'],
+                        //     'Starred' : false,
+                        //     'Replied' : message['Replied'],
+                        //     'Type' : message['Type'],
+                        //     'Muk' : message['Muk'],
+                        //     'Seen' : false
+                        // });
+                        // props.update_chat_position(message['From'])
+                        // })
+
+                        // storing the resource temporarily 
+                        props.send_message(index , {
+                          'id' : 'Not saved',
+                          'Message' : message['Message'],
+                          'Receiving' : true,
+                          'Contact' : message['Contact'],
+                          'Date' : new Date().toString(),
+                          'Status' : 'sent',
+                          'Server_id' : message['From'],
+                          'forwarded' : message['forwarded'],
+                          'Starred' : false,
+                          'Replied' : message['Replied'],
+                          'Type' : message['Type'],
+                          'Muk' : message['Muk'],
+                          'Seen' : false
+                      });
                         props.update_chat_position(message['From'])
+
+                        await fun_database.store_message_db({
+                          'Contact' : message['Contact'],
+                          'Message' : message['Message'],
+                          'Status' : 'sent',
+                          'Date' : new Date().toString(),
+                          'Receiving' : true,
+                          'Server_id' : message['From'],
+                          'forwarded' : message['forwarded'],
+                          'Starred' : false,
+                          'Replied' : message['Replied'],
+                          'Type' : message['Type'],
+                          'Muk' : message['Muk'],
+                          'Seen' : false,
                         })
+
   
                       }
                       // If he is a newbie then we proceed we the code below
@@ -178,50 +212,97 @@ export function MyTabs(props) {
                            // Inserting the newbie's contact in our realtime store(redux)
                            props.update_active_contacts({'Name' : message['Name'] , 'Contact' : message['Contact'] , 'Server_id' : message['From']})
                           
-                          await fun_database.store_received_media(message['Message'] , message['Type']).then(async(resource)=>{
-                            await fun_database.store_message_db({
-                              'Contact' : message['Contact'],
-                              'Message' : resource,
-                              'Status' : 'delivered',
-                              'Date' : new Date().toString(),
-                              'Receiving' : true,
-                              'Server_id' : message['From'],
-                              'forwarded' : message['forwarded'],
-                              'Starred' : false,
-                              'Replied' : message['Replied'],
-                              'Type' : message['Type'],
-                              'Muk' : message['Muk'],
-                              'Seen' : false
-                            })
+                        //   await fun_database.store_received_media(message['Message'] , message['Type']).then(async(resource)=>{
+                        //     await fun_database.store_message_db({
+                        //       'Contact' : message['Contact'],
+                        //       'Message' : resource,
+                        //       'Status' : 'delivered',
+                        //       'Date' : new Date().toString(),
+                        //       'Receiving' : true,
+                        //       'Server_id' : message['From'],
+                        //       'forwarded' : message['forwarded'],
+                        //       'Starred' : false,
+                        //       'Replied' : message['Replied'],
+                        //       'Type' : message['Type'],
+                        //       'Muk' : message['Muk'],
+                        //       'Seen' : false
+                        //     })
 
-                            let info = {
-                              'Name' : message['Name'],
-                              'Server_id' : message['From'],
-                              'Contact_name' : '@unknown',
-                              'Messages' : [
-                                  { 
-                                      'id' : 'Not saved',
-                                      'Contact' : message['Contact'],
-                                      'Message' :resource,
-                                      'Receiving' : true,
-                                      'Date' : new Date().toString(),
-                                      'Status' : 'delivered',
-                                      'Server_id' : message['From'],
-                                      'forwarded' : message['forwarded'],
-                                      'Starred' : false,
-                                      'Replied' : message['Replied'],
-                                      'Type' : message['Type'],
-                                      'Muk' : message['Muk'],
-                                      'Seen' : false,
-                                  }
-                              ]
-                          }
-                          props.send_message_new(info)
-                          props.create_new_chat_position({
-                              'Server_id' : message['From'],
-                              'index' : (props.state.fun.Messages.length-1),
-                          })
+                        //     let info = {
+                        //       'Name' : message['Name'],
+                        //       'Server_id' : message['From'],
+                        //       'Contact_name' : '@unknown',
+                        //       'Messages' : [
+                        //           { 
+                        //               'id' : 'Not saved',
+                        //               'Contact' : message['Contact'],
+                        //               'Message' :resource,
+                        //               'Receiving' : true,
+                        //               'Date' : new Date().toString(),
+                        //               'Status' : 'delivered',
+                        //               'Server_id' : message['From'],
+                        //               'forwarded' : message['forwarded'],
+                        //               'Starred' : false,
+                        //               'Replied' : message['Replied'],
+                        //               'Type' : message['Type'],
+                        //               'Muk' : message['Muk'],
+                        //               'Seen' : false,
+                        //           }
+                        //       ]
+                        //   }
+                        //   props.send_message_new(info)
+                        //   props.create_new_chat_position({
+                        //       'Server_id' : message['From'],
+                        //       'index' : (props.state.fun.Messages.length-1),
+                        //   })
+                        // })
+
+                          // first loading the resource into the redux store
+
+                          let info = {
+                            'Name' : message['Name'],
+                            'Server_id' : message['From'],
+                            'Contact_name' : '@unknown',
+                            'Messages' : [
+                                { 
+                                    'id' : 'Not saved',
+                                    'Contact' : message['Contact'],
+                                    'Message' :message['Message'],
+                                    'Receiving' : true,
+                                    'Date' : new Date().toString(),
+                                    'Status' : 'sent',
+                                    'Server_id' : message['From'],
+                                    'forwarded' : message['forwarded'],
+                                    'Starred' : false,
+                                    'Replied' : message['Replied'],
+                                    'Type' : message['Type'],
+                                    'Muk' : message['Muk'],
+                                    'Seen' : false,
+                                }
+                            ]
+                        }
+                        // storing the received resource temporarily into the database
+                        await fun_database.store_message_db({
+                          'Contact' : message['Contact'],
+                          'Message' : message['Message'],
+                          'Status' : 'sent',
+                          'Date' : new Date().toString(),
+                          'Receiving' : true,
+                          'Server_id' : message['From'],
+                          'forwarded' : message['forwarded'],
+                          'Starred' : false,
+                          'Replied' : message['Replied'],
+                          'Type' : message['Type'],
+                          'Muk' : message['Muk'],
+                          'Seen' : false
                         })
+
+                        props.send_message_new(info)
+                        props.create_new_chat_position({
+                            'Server_id' : message['From'],
+                            'index' : (props.state.fun.Messages.length-1),
+                        })
+                        // End of loading the resource into the redux state
                       }
   
                   }

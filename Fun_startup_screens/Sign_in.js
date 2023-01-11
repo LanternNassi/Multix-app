@@ -25,7 +25,7 @@ export function Sign_in(props){
                 
                 <View style = {styles.input_container}>
                 <View style = {styles.header}>
-                    <Avatar icon = {{ name : 'cloud-upload' , type : 'fontawesome' , size : 40 , color : props.state.fun.Layout_Settings.Icons_Color }} size = {'medium'} />
+                <Avatar  source = {require('../assets/Notifications.png')} rounded size = {'large'} />
                     <Text style = {styles.Header_text}>
                         Sign in 
                     </Text>
@@ -67,8 +67,24 @@ export function Sign_in(props){
                             setPassword(text)
                         } }
                     />
+                    
+                    {/* <View style = {{
+                       top : 0.06 * ScreenHeight,
+                    }}>
+                        <TouchableOpacity onPress = {()=>{
+                            props.state.business.navigation.navigation.navigate('Reset Password')
+                        }}>
+                            <Text style = {{
+                                fontSize : 14,
+                                fontWeight : 'bold',
+
+                            }}>Forgot password ? </Text>
+                        </TouchableOpacity>
+                       
+                    </View> */}
                   
                     <View style = {{ position : 'relative' , height : ScreenHeight * 0.2 , top : 50 , bottom : 0 }}>
+
                         <TouchableOpacity onPress = {
                             () => {
                                setspin(true)
@@ -104,6 +120,7 @@ export function Sign_in(props){
                         } style = {{ width : 180 , height : 42 , borderRadius :21  , backgroundColor : props.state.fun.Layout_Settings.Icons_Color, justifyContent : 'center' , alignItems : 'center'  }}>
                             <Text style = {{color : 'white'}}>Sign in </Text>
                         </TouchableOpacity>
+
     
                     </View>
                 </View>
