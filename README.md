@@ -20,7 +20,7 @@ Multix app is both a socialmedia and business app that i built and later commerc
 ### 5. Customizable interface 
   This feature is implemented by utilizing redux to store and provide real time state where the client can customize their interface according to their needs by changing the colors of the various components like icons, headers , etc 
 ### 6. Shopping platform
-  The shopping platform is run on an ASGI web microservice within the same system space to offer a more reliable service to both clients and customers. It supports a lot of features including shopping cart , contracting , negotiations best suited to the Ugandan economy 
+  The shopping platform is run on an ASGI web microservice within the same system space to offer a more reliable service to both clients and customers. It supports a lot of features including shopping cart , contracting , negotiations best suited to the Ugandan economy in all cases. 
 
 ## Project Showcase
 
