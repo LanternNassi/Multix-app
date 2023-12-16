@@ -4,7 +4,7 @@ import { connect } from 'react-redux'
 
 export const Privacy_policy = () => {
     return (
-        <ScrollView contentContainerStyle = {{alignItems : 'center'}}>
+        <ScrollView contentContainerStyle = {{alignItems : 'center' }}>
             <Text style = {styles.policy_text}>
             The Multix engineering team built the Multix app as a Free app. This SERVICE is provided by Multix at no cost and is intended for use as is.
             </Text>
@@ -118,7 +118,7 @@ const styles = StyleSheet.create({
     container : {
         flex : 1 ,
         justifyContent : 'center',
-        alignItems : 'center'
+        alignItems : 'center',
     },
     policy_text : {
         fontSize : 15 ,

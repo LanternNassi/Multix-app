@@ -56,19 +56,19 @@ export function Settings(props) {
                         width : ScreenWidth ,
                         alignItems : 'center' , 
                         justifyContent : 'center' }}>
-                    <Text style = {{ fontWeight : 'bold' }}> General Settings </Text>
+                    <Text style = {{ fontWeight : 'bold' , color : 'white' }}> General Settings </Text>
                 </View>
 
-                <TouchableOpacity onPress = {
+                <TouchableOpacity  onPress = {
                     ()=>{
                         props.business.navigation.navigation.navigate('Layout')
                     }
                 }>
-                <ListItem>
+                <ListItem containerStyle = {styles.item}>
                     <Avatar containerStyle = {{ backgroundColor : props.fun.Layout_Settings.Icons_surroundings }} rounded icon = {{ name : 'user-circle' , color : props.fun.Layout_Settings.Icons_Color, type : 'font-awesome' }} />
                     <ListItem.Content style = {{ flexDirection : 'column', justifyContent : 'space-between' }}>
-                    <ListItem.Title>Custom layout </ListItem.Title>
-                    <ListItem.Subtitle> Customize how the app looks </ListItem.Subtitle>
+                    <ListItem.Title style = {styles.text_setting}>Custom layout </ListItem.Title>
+                    <ListItem.Subtitle style = {styles.text_setting}> Customize how the app looks </ListItem.Subtitle>
                     </ListItem.Content>
                     <ListItem.Chevron/>
                 </ListItem>
@@ -82,11 +82,11 @@ export function Settings(props) {
                         }
                     }
                 }>
-                <ListItem>
+                <ListItem containerStyle = {styles.item}>
                     <Avatar rounded containerStyle = {{ backgroundColor : props.fun.Layout_Settings.Icons_surroundings }} icon = {{ name : 'user-circle' , color : props.fun.Layout_Settings.Icons_Color , type : 'font-awesome' }} />
                     <ListItem.Content style = {{ flexDirection : 'column', justifyContent : 'space-between' }}>
-                    <ListItem.Title> Business Profile </ListItem.Title>
-                    <ListItem.Subtitle> Have a look at how customers view your business profile </ListItem.Subtitle>
+                    <ListItem.Title style = {styles.text_setting}> Business Profile </ListItem.Title>
+                    <ListItem.Subtitle style = {styles.text_setting}> Have a look at how customers view your business profile </ListItem.Subtitle>
                     </ListItem.Content>
                     <ListItem.Chevron/>
                 </ListItem>
@@ -95,11 +95,11 @@ export function Settings(props) {
                 <TouchableOpacity onPress = {()=>{
                     nots ? setnots(false) : setnots(true)
                 }}>
-                <ListItem>
+                <ListItem containerStyle ={styles.item}>
                     <Avatar rounded containerStyle = {{ backgroundColor : props.fun.Layout_Settings.Icons_surroundings }} icon = {{ name : 'credit-card-alt' , color : props.fun.Layout_Settings.Icons_Color, type : 'font-awesome' }} />
                     <ListItem.Content style = {{ flexDirection : 'column', justifyContent : 'space-between' }}>
-                    <ListItem.Title> Show Notifications </ListItem.Title>
-                    <ListItem.Subtitle> Allow Multix to show notifications </ListItem.Subtitle>
+                    <ListItem.Title style = {styles.text_setting}> Show Notifications </ListItem.Title>
+                    <ListItem.Subtitle style = {styles.text_setting}> Allow Multix to show notifications </ListItem.Subtitle>
                     </ListItem.Content>
                     <Switch value = {nots} color = {props.fun.Layout_Settings.Icons_Color}/>
                 </ListItem>
@@ -131,11 +131,11 @@ export function Settings(props) {
                         }
                     }
                 } >
-                <ListItem>
+                <ListItem containerStyle = {styles.item}>
                     <Avatar rounded containerStyle = {{ backgroundColor : props.fun.Layout_Settings.Icons_surroundings }} icon = {{ name : 'share-alt' , color : props.fun.Layout_Settings.Icons_Color, type : 'font-awesome' }} />
                     <ListItem.Content style = {{ flexDirection : 'column', justifyContent : 'space-between' }}>
-                    <ListItem.Title> Share Multix app to your friends </ListItem.Title>
-                    <ListItem.Subtitle> Help the Multix app community grow </ListItem.Subtitle>
+                    <ListItem.Title style = {styles.text_setting}> Share Multix app to your friends </ListItem.Title>
+                    <ListItem.Subtitle style = {styles.text_setting}> Help the Multix app community grow </ListItem.Subtitle>
                     </ListItem.Content>
                     <ListItem.Chevron/>
                 </ListItem>
@@ -146,11 +146,11 @@ export function Settings(props) {
                         props.business.navigation.navigation.navigate('Feedback' , { type : 'Report' })
                     }
                 } >
-                <ListItem>
+                <ListItem containerStyle ={styles.item}>
                     <Avatar rounded containerStyle = {{ backgroundColor : props.fun.Layout_Settings.Icons_surroundings }} icon = {{ name : 'bullhorn' , color : props.fun.Layout_Settings.Icons_Color, type : 'font-awesome' }} />
                     <ListItem.Content style = {{ flexDirection : 'column', justifyContent : 'space-between' }}>
-                    <ListItem.Title> Report an issue </ListItem.Title>
-                    <ListItem.Subtitle> Found any queries ?. We shall be happy to attend to them.</ListItem.Subtitle>
+                    <ListItem.Title style = {styles.text_setting}> Report an issue </ListItem.Title>
+                    <ListItem.Subtitle style = {styles.text_setting}> Found any queries ?. We shall be happy to attend to them.</ListItem.Subtitle>
                     </ListItem.Content>
                     <ListItem.Chevron/>
                 </ListItem>
@@ -161,11 +161,11 @@ export function Settings(props) {
                         props.business.navigation.navigation.navigate('Feedback' , { type : 'Feedback' })
                     }
                 } >
-                <ListItem>
+                <ListItem containerStyle = {styles.item}>
                     <Avatar rounded containerStyle = {{ backgroundColor : props.fun.Layout_Settings.Icons_surroundings }} icon = {{ name : 'user-circle' , color : props.fun.Layout_Settings.Icons_Color, type : 'font-awesome' }} />
                     <ListItem.Content style = {{ flexDirection : 'column', justifyContent : 'space-between' }}>
-                    <ListItem.Title> Feed Back </ListItem.Title>
-                    <ListItem.Subtitle> How are you finding the Multix app so far ? We would like to hear from you.</ListItem.Subtitle>
+                    <ListItem.Title style = {styles.text_setting}> Feed Back </ListItem.Title>
+                    <ListItem.Subtitle style = {styles.text_setting}> How are you finding the Multix app so far ? We would like to hear from you.</ListItem.Subtitle>
                     </ListItem.Content>
                     <ListItem.Chevron/>
                 </ListItem>
@@ -178,11 +178,11 @@ export function Settings(props) {
                         props.business.navigation.navigation.navigate('Privacy Policy' )
                     }
                 } >
-                <ListItem>
+                <ListItem containerStyle = {styles.item}>
                     <Avatar rounded containerStyle = {{ backgroundColor : props.fun.Layout_Settings.Icons_surroundings }} icon = {{ name : 'bullhorn' , color : props.fun.Layout_Settings.Icons_Color, type : 'font-awesome' }} />
                     <ListItem.Content style = {{ flexDirection : 'column', justifyContent : 'space-between' }}>
-                    <ListItem.Title> Privacy Policy </ListItem.Title>
-                    <ListItem.Subtitle> To get more comfortable with us, we would like you to take a minute read through our privacy policy.</ListItem.Subtitle>
+                    <ListItem.Title style = {styles.text_setting}> Privacy Policy </ListItem.Title>
+                    <ListItem.Subtitle style = {styles.text_setting}> To get more comfortable with us, we would like you to take a minute read through our privacy policy.</ListItem.Subtitle>
                     </ListItem.Content>
                     <ListItem.Chevron/>
                 </ListItem>
@@ -200,11 +200,11 @@ export function Settings(props) {
                         )
                     }
                 } >
-                <ListItem>
+                <ListItem containerStyle = {styles.item}>
                     <Avatar rounded containerStyle = {{ backgroundColor : props.fun.Layout_Settings.Icons_surroundings }} icon = {{ name : 'warning' , color : props.fun.Layout_Settings.Icons_Color, type : 'font-awesome' }} />
                     <ListItem.Content style = {{ flexDirection : 'column', justifyContent : 'space-between' }}>
-                    <ListItem.Title> Delete account </ListItem.Title>
-                    <ListItem.Subtitle> No longer comfortable with us ?? , The choice is yours.</ListItem.Subtitle>
+                    <ListItem.Title style = {styles.text_setting}> Delete account </ListItem.Title>
+                    <ListItem.Subtitle style = {styles.text_setting}> No longer comfortable with us ?? , The choice is yours.</ListItem.Subtitle>
                     </ListItem.Content>
                     <ListItem.Chevron/>
                 </ListItem>
@@ -216,9 +216,9 @@ export function Settings(props) {
                     justifyContent : 'center',
                     alignItems : 'center'
                 }}>
-                    <Text style = {{ fontSize : 14 , }}> Multix Version 1.0.0 </Text>
-                    <Text style = {{ fontSize : 9 ,  }}> Special Regards to @Nessim and @Douglas </Text>
-                    <Text style = {{ fontSize : 9 ,  }}> For more information contact us at MultixApp@gmail.com </Text>
+                    <Text style = {{ fontSize : 14 , color : 'white' }}> Multix Version 1.0.0 </Text>
+                    <Text style = {{ fontSize : 9 , color : 'white' }}> Special Regards to @Nessim and @Douglas </Text>
+                    <Text style = {{ fontSize : 9 , color : 'white' }}> For more information contact us at MultixApp@gmail.com </Text>
 
 
                 </View>
@@ -245,6 +245,7 @@ export default connect(mapStateToProps , mapDispatchToProps)(Settings)
 const styles = StyleSheet.create({
     container : {
         flex : 1,
+        backgroundColor : '#121212'
     },
     scroll : {
         flex : 1,
@@ -271,7 +272,8 @@ const styles = StyleSheet.create({
     },
     header_text : {
         fontSize : 14,
-        fontWeight : 'bold'
+        fontWeight : 'bold',
+        color : 'white'
     },
     elevator: {
         height : 0.13 * ScreenHeight,
@@ -281,5 +283,12 @@ const styles = StyleSheet.create({
         alignItems : 'center',
         backgroundColor : 'white',
         elevation : 20
+    },
+    item : {
+        backgroundColor : '#121212',
+        
+    },
+    text_setting : {
+        color : 'white'
     }
 })

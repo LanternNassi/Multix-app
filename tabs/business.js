@@ -5,7 +5,7 @@ import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityI
 import Header_business from '../constants/Header_business.js'
 import Business_page from './business_tabs/Business_page.js'
 import Hiring from './business_tabs/Hiring.js';
-import Hot_deals from './business_tabs/Hot_deals.js'
+import Hires from './business_tabs/Hires.js'
 //import transactions from './business_tabs/transactions.js'
 import { createMaterialTopTabNavigator } from 'react-navigation-tabs'
 import { createAppContainer } from 'react-navigation'
@@ -13,30 +13,27 @@ import {connect} from 'react-redux'
 import * as SQLite from 'expo-sqlite'
 import business_database from '../redux/Database_transactions.js'
 import Gig_notifications from '../websockets/Gig_notifications.js'
-
-
-
+import ProductsScreen from './business_tabs/ProductsScreen.js'
 
 
 export function business(props) {
         
     const Tab_Navigator = createMaterialTopTabNavigator({
         Business : {
-            screen :Business_page,
+            screen :()=><ProductsScreen type = {'products'}/>,
             navigationOptions : {
-                tabBarLabel : 'Business',
+                tabBarLabel : 'Products',
             }},
         Deals : {
-            screen : Hot_deals,
+            screen : ()=><ProductsScreen type = {'deals'}/>,
             navigationOptions : {
                 tabBarLabel : 'Deals',
-
             }},
     
         Hiring : {
-            screen : Hiring,
+            screen : Hires,
             navigationOptions : {
-                tabBarLabel : 'Hiring',
+                tabBarLabel : 'Hires',
             }},
         
         
@@ -53,50 +50,7 @@ export function business(props) {
 
     const Navigator = createAppContainer(Tab_Navigator);
         
-    useEffect(()=>{
-        let Gigs = business_database.gig_data();
-        props.store_gigs_redux(Gigs)
-        props.create_request_instances((props.state.Business_profile.Account)?(props.state.Business_profile.Account.Multix_token) : ('000'))
-        if (props.state.Business_profile['Account']){
-            console.log('opened')
-            let notifier = new Gig_notifications(props.state.Business_profile['Account']['Name'] , props.state.Debug)
-            notifier.onOpen((e)=>{
-              //console.log('opened')
-            })
-            notifier.onError((error)=>{
-              //console.log('error')
-              //console.log(error)
-              
-            })
-            notifier.onMessage((message)=>{
-              let data = JSON.parse(message.data)
-              //console.log(data)
-              Setbusiness_anime('')
-              Setbusiness_anime('slideInDown')
-              axios({
-                method : 'GET',
-                url : props.state.Debug ? ('http://192.168.43.232:8000/fetch_contracts_notifications_proposals/'):('http://multix-business.herokuapp.com/fetch_contracts_notifications_proposals/') ,
-                data : {},
-                headers : { 
-                  'content-type' : 'application/json',
-                  'Authorization': 'Token ' + props.state.Business_profile['Account']['Multix_token'] ,
-                  
-              }
-              }).then((response)=>{
-                if (response.status === 200){
-                  props.store_gig_notifications(response.data)
-                }
-              })
-            })
-            notifier.onClose((e)=>{
-              //console.log('closed')
-            })
-            props.start_gig_notifications(notifier)
-          } else {
-            //console.log('Didnt quite catch that')
-          }
-    },
-    [])
+    
     return (
         <View style = {{flex : 1}}>
             <Header_business/>

@@ -3,7 +3,6 @@ import Reconnectingwebsocket from 'react-native-reconnecting-websocket'
 
 export class Chat{
     static init(id,Debug){
-        console.log(Debug)
         if (Debug) {
             this.chat_ws = new Reconnectingwebsocket('ws://192.168.43.232:8040/ws/chat/' + id + '/' )
         } else {

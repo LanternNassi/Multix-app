@@ -9,7 +9,7 @@ import FontAwesomeIcon from 'react-native-vector-icons/FontAwesome'
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons'
 import business_database from '../../redux/Database_transactions'
 import * as SQLite from 'expo-sqlite'
-
+import { ALERT_TYPE, Dialog, AlertNotificationRoot, Toast } from 'react-native-alert-notification';
 
 
 
@@ -23,7 +23,7 @@ const come_out = {
 
     },
     1 : {
-        top : 0.1 * ScreenHeight,
+        top : 0.2 * ScreenHeight,
 
     }
 
@@ -31,7 +31,7 @@ const come_out = {
 
 const collapse = {
     0 : {
-        top : 0.1 * ScreenHeight,
+        top : 0.2 * ScreenHeight,
 
     },
     0.5 : {
@@ -50,79 +50,12 @@ const collapse = {
 export const Text_edit = (props) => {
     const [ value , setvalue ] = useState(props.value)
     const [ done , setdone ] = useState(false)
-    const [name_error , setname_error] = useState(false)
-    const [phone_error , setphone_error] = useState(false)
+   
 
-    const query_maker = ( type_of_profile , official_parameter) => {
-        if (type_of_profile === 'business profile'){
-            return 'UPDATE Business_account SET ' + official_parameter + ' = ?'
-        } else if (type_of_profile === 'Gig'){
-            return 'UPDATE Gigs SET ' + official_parameter + ' = ? WHERE Server_id = ?'  
-
-        }
-    }
-    const validate_name = () => {
-        props.state.request_business_json({
-            method : 'POST',
-            url : '/Validate_name',
-            data : {'Name' : value}
-        }).then((response)=>{
-            if (response.status == 207){
-                setName('')
-                setname_error(true)
-            } else {
-                setname_error(false)
-            }
-        })
-    }
-
-    const validate_phone = () => {
-        props.state.request_business_json({
-            method : 'POST',
-            url : '/Validate_number',
-            data : {'Contact' : value}
-        }).then((response)=>{
-            if (response.status == 207){
-                setContact('')
-                setphone_error(true)
-            } else {
-                setphone_error(false)
-            }
-        })
-    }
-
-    const update_profile = (type_of_profile , official_parameter , updated_value) =>{
-        if (type_of_profile === 'business profile') {
-            console.log(official_parameter , updated_value)
-            
-            const db = SQLite.openDatabase('Business_database.db')
-            db.transaction((tx) => {
-                tx.executeSql(query_maker(type_of_profile , official_parameter),
-                [updated_value],(tx,Result_set) => {
-                    console.log(Result_set)
-                } , (error) =>{
-                    console.log(error)
-                })
-            } , (error) => {} , () => {})
-
-        } else if (type_of_profile = 'Gig') {
-            console.log(props.id , official_parameter , updated_value)
-            const db = SQLite.openDatabase('Business_database.db')
-            db.transaction((tx) => {
-                tx.executeSql(query_maker(type_of_profile , official_parameter),
-                [updated_value,props.id],(tx,Result_set) => {
-                    console.log('update successfull')
-                } , (error) =>{
-                    console.log(error)
-                })
-            } , (error) => {} , () => {})
-
-        }
-        
-    }
-
+    
+    
         return (
-            <Animatable.View animation = {props.action === 'come out' && !done ? come_out : collapse} style = {styles.container}>
+            <Animatable.View animation = {props.state.business_edit && !done ? come_out : collapse} style = {styles.container}>
                 <ScrollView style = {{
                    
                 }}>
@@ -131,34 +64,10 @@ export const Text_edit = (props) => {
                 }}>
                     <Card.Title style = {{
                         color : 'white'
-                    }}> Change {props.type}</Card.Title>
+                    }}> {(props.type==='Quantity')?('Input quantity'):('Add a review')}</Card.Title>
                     <Card.Divider/>
                     <View style = {styles.text_input}>
-                        {
-                            (name_error || phone_error)  && (props.type === 'Name' || props.type === 'Contact') ? (
-                                <View>
-                                        {
-                                            name_error ? (
-                                                <Text style = {{
-                                                    fontSize : 9,
-                                                    color : 'red'
-                                                }}>
-                                                #Name is already in use by another client
-                                                </Text>
-                                            ) : (
-                                                <Text style = {{
-                                                    fontSize : 9,
-                                                    color : 'red'
-                                                }}>
-                                                #Contact is already in use by another client
-                                                </Text>
-                                            )
-                                        }
-                                </View>
-                            ) : (
-                                <View/>
-                            )
-                        }
+                       
                     { props.type === 'Description' ? (
                         <Fumi
 
@@ -187,13 +96,7 @@ export const Text_edit = (props) => {
                         <Fumi
                         onChangeText = {
                             (text) =>{
-                                if (props.type === 'Name'){
-                                    validate_name()
-                                } else if (props.type === 'Contact') {
-                                    validate_phone()
-                                } else {
-                                    setvalue(text)
-                                }
+                               setvalue(text)
                             }
                         }
                         value = {value}
@@ -213,78 +116,36 @@ export const Text_edit = (props) => {
                     
                     </View>
                     <Text style={{marginBottom: 8 , color : 'white'}}>
-                        We highly recommend you provide relevant updates to make your profile stand out as suggested by the Multix Designs team 
+                    {(props.type==='Quantity')?('You will be contacted by the sales team shortly after comforming with us'):('How are you finding this product')} 
                         </Text>
                         <Card.Divider/>
                         <View style = {styles.buttons_container}>
                         <Button title = {'Confirm'} onPress = {
                             ()=>{
-                                if (!name_error && props.type === 'Name'){
-                                    if (props.effect === 'business profile'){
-                                        let overall_data = {'update' : {data : value} , mode : props.mode , type : props.name }
-                                        props.state.request_business_json({
-                                            method : 'PUT',
-                                            url : 'update_business_profile',
-                                            data : overall_data,
-                                        }).then((response) => {
-                                            update_profile(props.effect,props.name,value)
-                                            props.update_profile_account_redux(props.name , value)
-                                            setdone(true)
-                                            setTimeout(()=>{
-                                                props.notifier()
-                                                setdone(false)
-                                            },800)
-                                            //let business_db = new business_database()
-                                            //let profile = business_db.business_data()
-                                            //setTimeout(()=>{
-                                            //props.store_profile_redux(profile)
-                                            //},3000)
-                                        })
-                                    } else if ( props.effect === 'Gig' ){
-                                        let data = props.type
-                                        let overall_data = {'update' : {data : value} , mode : props.mode , Gig_id : props.id , type : props.name }
-                                        //console.log(overall_data)
-                                        props.state.request_business_json({
-                                            method : 'PUT',
-                                            url : 'update_gig',
-                                            data : overall_data,
-                                        }).then((response) => {
-                                            update_profile(props.effect,props.name,value)
-                                            //let business_db = new business_database()
-                                            //let gigs = business_db.gig_data()
-                                            //props.store_gigs_redux(gigs)
-                                            props.update_profile_gigs_redux(props.id , props.name , value)
-                                            setdone(true)
-                                        
-                                            setTimeout(()=>{
-                                                props.notifier()
-                                                setdone(false)
-                                            },800)
-                                            //console.log(response.data)
-                                        })
-                                    }
-                                } else {
-                                    alert('Please enter a valid name to continue with the update')
-                                }
                                
-                                
+                                setdone(true)
+                                    setTimeout(()=>{
+                                        props.notifier([false,'Quantity'])
+                                        setdone(false)
+                                        props.submit_function(value ,props.product.id ,()=>{
+                                            alert('You will be contacted by our sales team shortly.')
+                                        })
+                                        },800)
                             }
                         }/>
                             
                             <Button onPress = {
                                 () =>{
                                     setdone(true)
-                                    
                                     setTimeout(()=>{
-                                        props.notifier()
+                                        props.notifier([false,'Quantity'])
                                         setdone(false)
                                     },800)
                                 }
                             } title = {'Cancel'} titleStyle = {{ color : 'white' }} />
-                                
-                            
                              
                         </View>
+
                 </Card>
                 </ScrollView>
             </Animatable.View>
@@ -303,11 +164,7 @@ const mapStateToProps = (state_redux) => {
 }
 
 const mapDispatchToProps = (dispatch) => ({
-    notifier : () => dispatch({type : 'done' , decide : true}),
-    //store_gigs_redux : (Gigs) => dispatch({type : 'update_bus_profile' , key : 'Gigs' , value : Gigs}),
-    //store_profile_redux : (Profile) => dispatch({type : 'update_business_profile' , value : Profile  }),
-    update_profile_account_redux : (name , value) => dispatch({ type : 'update_business_profile_account' , name : name , value : value }),
-    update_profile_gigs_redux : (Server_id , name , value) => dispatch({ type : 'update_business_profile_gig' , name : name , value : value , Server_id : Server_id })
+    notifier : (action) => dispatch({type : 'done' , decide : action}),
     
 })
 

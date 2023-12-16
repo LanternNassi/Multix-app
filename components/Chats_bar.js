@@ -63,7 +63,7 @@ class Chats_bars extends Component {
                             alignItems: 'center'
                         }}>
                             <Avatar icon = {{ name : 'cloud-upload' , type : 'fontawesome' , size : 40 , color : this.props.state.fun.Layout_Settings.Icons_Color }} size = {'medium'} />
-                            <Text style = {{ fontWeight : 'bold' }}>No online chats yet</Text>
+                            <Text style = {{ fontWeight : 'bold', color : 'white' }}>No online chats yet</Text>
                         </View>
                     )
                 } 

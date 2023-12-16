@@ -21,7 +21,7 @@ export class Lets_connect extends Component {
     }
     render(){
         return (
-                <View style = {{ flex : 1 } }>
+                <View style = {{ flex : 1 , backgroundColor : 'white' } }>
                     <Chats_bars/>
                     <Chats_container navigation = {this.props.navigation}/>
                     <TouchableOpacity onPress = {

@@ -300,7 +300,6 @@ static update_db_connes(server_list , database_list){
                                           [ server_list[n].Contact , item['Server_id'] ],(tx , Result)=>{},(error)=>{})
                                       }
                                   }
-                                  //console.log('here')
                           }
                          
                        
@@ -385,17 +384,17 @@ static async store_sent_message(file){
 
 static async default_setup_layout(){
     const defaults = {
-        Icons_Color : 'blue',
-        Icons_surroundings : 'white',
-        Top_navigation : '#006600',
-        Bottom_navigation : 'white',
+        Icons_Color : '#ECCF42',
+        Icons_surroundings : 'black',
+        Top_navigation : '#121212',
+        Bottom_navigation : '#121212',
         Message_component : 'blue',
         Sender_component : 'white',
         Online_color : 'green',
         Sender_text_color : 'black',
         Message_text_color : 'white',
-        Bottom_navigation_icons_color : 'blue',
-        Header_color : 'white',
+        Bottom_navigation_icons_color : '#FFD700',
+        Header_color : '#121212',
     }
     let values = []
     for(const [key,value] of Object.entries(defaults)){
@@ -411,17 +410,17 @@ static async default_setup_layout(){
 
 static async reset_theme_default(){
     const defaults = {
-        Icons_Color : 'blue',
-        Icons_surroundings : 'white',
-        Top_navigation : '#006600',
-        Bottom_navigation : 'white',
+        Icons_Color : '#ECCF42',
+        Icons_surroundings : 'black',
+        Top_navigation : '#121212',
+        Bottom_navigation : '#121212',
         Message_component : 'blue',
         Sender_component : 'white',
         Online_color : 'green',
         Sender_text_color : 'black',
         Message_text_color : 'white',
-        Bottom_navigation_icons_color : 'blue',
-        Header_color : 'white',
+        Bottom_navigation_icons_color : '#FFD700',
+        Header_color : '#121212',
     }
     let values = []
     for(const [key,value] of Object.entries(defaults)){

@@ -14,6 +14,7 @@ let Overall_State = {
     close_open_bidders : false,
     done : 'no',
     Business_database : '',
+    business_edit : [false,'Quantity'],
     friends : [  
     ],
     messages : {
@@ -49,7 +50,7 @@ export default BusinessReducer = (state = Overall_State , action) => {
        
         case 'done' : {
             return {
-                ...state , business_profile_edit_done : action.decide
+                ...state , business_edit : action.decide
             }
 
         }

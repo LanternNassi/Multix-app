@@ -50,8 +50,9 @@ export class Chats_container extends Component {
                     justifyContent : 'space-around',
                     alignItems : 'center'
                 }}>
-                    <Avatar rounded size = {'small'} icon = {{ name : icon, type : 'font-awesome', size : 15 , color : 'black' }} />
+                    <Avatar rounded size = {'small'} icon = {{ name : icon, type : 'font-awesome', size : 15 , color : 'white' }} />
                     <Text style = {{
+                        color : 'white',
                         fontWeight : message.Seen ? ('normal') : ('bold')
                     }}>{message.Message.length > 26 ? (message.Message.slice(0,26) + "...") : (message.Message)}</Text>
                 </View>
@@ -59,9 +60,10 @@ export class Chats_container extends Component {
         } else if (message.Type === 'image') {
             return (
                 <View style = {styles.category }>
-                     <Avatar rounded size = {'small'} icon = {{ name : icon, type : 'font-awesome', size : 15 , color : 'black' }} />
+                     <Avatar rounded size = {'small'} icon = {{ name : icon, type : 'font-awesome', size : 15 , color : 'white' }} />
                      <Avatar rounded size = {'small'} icon = {{ name : 'file-photo-o', type : 'font-awesome', size : message.Seen ? (15) : (16.5) , color : 'black' }} />
                      <Text style = {{
+                        color : 'white',
                         fontWeight : message.Seen ? ('normal') : ('bold')
                      }} > {message.Type} </Text>
                 </View>
@@ -69,9 +71,10 @@ export class Chats_container extends Component {
         } else if (message.Type === 'video'){
             return (
                 <View style = {styles.category }>
-                <Avatar rounded size = {'small'} icon = {{ name : icon, type : 'font-awesome', size : 15 , color : 'black' }} />
+                <Avatar rounded size = {'small'} icon = {{ name : icon, type : 'font-awesome', size : 15 , color : 'white' }} />
                 <Avatar rounded size = {'small'} icon = {{ name : 'file-video-o', type : 'font-awesome', size : message.Seen ? (15) : (16.5) , color :'black' }} />
                 <Text style = {{
+                    color : 'white',
                     fontWeight : message.Seen ? ('normal') : ('bold')
                 }} > {message.Type} </Text>
             </View>
@@ -101,6 +104,7 @@ export class Chats_container extends Component {
     render() {
         return (
             <FlatList 
+                style = {{backgroundColor : '#121212'}}
                 horizontal = {false}
                 data = {this.props.state.fun.chats_positions}
                 keyExtractor = {(item,index)=>(index.toString())}
@@ -113,11 +117,11 @@ export class Chats_container extends Component {
                             justifyContent : 'center',
                             alignItems : 'center',
                         }}>
-                        <Image style = {{
+                        {/* <Image style = {{
                             height : 0.6 * ScreenHeight,
                             width : ScreenWidth,
                             opacity : 0.1
-                        }} source = {require('../assets/no-search-result.png')}/>
+                        }} source = {require('../assets/no-search-result.png')}/> */}
                         </View>
                     )
                 } 
@@ -135,7 +139,7 @@ export class Chats_container extends Component {
                             <TouchableOpacity onPress = {()=>{this.props.current_chat(name , thumbnail , color , item.item.index); 
                                 //console.log(this.props.state.fun.Messages[item.item.Index])
                              this.props.state.business.navigation.navigation.navigate('Chat_screen' , {Name:name , Index : item.item.index , Server_id : item.item.Server_id})}}  >
-                            <ListItem.Swipeable 
+                            <ListItem.Swipeable containerStyle = {{ backgroundColor : '#121212'}}
                             style = {styles.item}
                             >
                                     <ListItem.Content style = {styles.arranger}>
@@ -169,11 +173,11 @@ export class Chats_container extends Component {
                                                 
                                             </TouchableOpacity>
                                             <View style = {{ marginLeft : 10, }}>
-                                                <ListItem.Title key = {'title'} style = {{ fontWeight : 'bold' }}>
+                                                <ListItem.Title key = {'title'} style = {{ fontWeight : 'bold' , color : 'white' }}>
                                                 {chat.Name}
                                                 </ListItem.Title>
                                                 <ListItem.Subtitle key ={'subtitle'}>
-                                                    { chat.Messages[0] ? this.determine_message(chat.Messages[0]) : (<Text style = {{ fontStyle : 'italic' }} >deleted</Text>) }
+                                                    { chat.Messages[0] ? this.determine_message(chat.Messages[0]) : (<Text style = {{ fontStyle : 'italic' , color : 'white' }} >deleted</Text>) }
                                                 </ListItem.Subtitle>
                                             </View>
                                         </SkeletonContent>
@@ -187,12 +191,13 @@ export class Chats_container extends Component {
                                     {
                                         this.props.state.fun.Typing[chat.Name] ? (
                                             <Text style = {{
-                                                fontStyle : 'italic'
+                                                fontStyle : 'italic',
+                                                color : 'white',
                                             }}>
                                                 Typing ...
                                             </Text>
                                         ) : (
-                                            <Text>
+                                            <Text style = {{ color : 'white' }}>
                                             @{chat.Contact_name.length > 10 ? (chat.Contact_name.slice(0,10) + '...') : (chat.Contact_name) }
                                         </Text>
                                         )
@@ -212,6 +217,7 @@ export class Chats_container extends Component {
                     }
                 }
             />
+            
         )
     }
 }
@@ -232,15 +238,14 @@ const styles = StyleSheet.create(
             flexDirection : 'row',
             justifyContent : 'flex-start',
             alignItems : 'center',
-            
+            // backgroundColor : '#121212',
+
         } ,
 
         item : {
-            backgroundColor : 'rgba(255,0,255,.1)',
         } ,
         element : {
             flexGrow : 1 ,
-            
        },
        category : {
            width : 0.17 * ScreenWidth,

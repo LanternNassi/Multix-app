@@ -27,7 +27,7 @@ export class Chats_FAB extends Component {
     }
     render() {
         return (
-            <View style = {{ flex : 1 }}>
+            <View style = {{ flex : 1 , backgroundColor : '#121212' }}>
                 <View style = {styles.header}>
                     <Text style = {styles.header_title}>
                         Connected Chats
@@ -89,7 +89,8 @@ export default connect(mapStateToProps, mapDispatchToProps)(Chats_FAB)
 const styles = StyleSheet.create({
     item : {
         width : ScreenWidth,
-        height : 0.08 * ScreenHeight,        
+        height : 0.08 * ScreenHeight, 
+        // backgroundColor : 'black'       
     },
     header : {
         height : 0.17 * ScreenHeight,
@@ -99,6 +100,7 @@ const styles = StyleSheet.create({
         flexWrap : 'nowrap',
     },
     header_title : {
+        color : 'white',
         fontSize : 17,
         fontWeight : 'bold',
     },
@@ -117,6 +119,7 @@ const styles = StyleSheet.create({
         alignItems : 'center',
     },
     name : {
+        color : 'white',
         fontSize : 14 , 
         fontWeight : 'bold'
     },

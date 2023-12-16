@@ -3,24 +3,33 @@ import * as mime from 'react-native-mime-types'
 
 export default FunReducer = (state = {
     Layout_Settings : {
-        Icons_Color : 'blue',
-        Icons_surroundings : 'white',
-        Top_navigation : '#006600',
-        Bottom_navigation : 'white',
+        Icons_Color : '#ECCF42',
+        Icons_surroundings : 'black',
+        Top_navigation : '#121212',
+        Bottom_navigation : '#121212',
         Message_component : 'blue',
         Sender_component : 'white',
+        Online_color : 'green',
         Sender_text_color : 'black',
         Message_text_color : 'white',
-        Online_color : 'green',
-        Bottom_navigation_icons_color : 'blue',
-        Header_color : 'white',
+        Bottom_navigation_icons_color : '#FFD700',
+        Header_color : '#121212',
     },
     Typing : {},
     Connected : false,
 } , action) => {
     switch(action.type){
         case 'initiate_sign_up' : {
-            state['Fun_sign_up'] = {}
+            state['Fun_sign_up'] = {
+                Name : 'N/A',
+                Contact : 'N/A',
+                Password : 'N/A',
+                Email : 'N/A',
+                Nickname : 'N/A',
+                Hobby : 'N/A',
+                Birthdate : '09-05-2003',
+                Residence : 'N/A',
+            }
             return {
                 ...state
             }
@@ -33,8 +42,11 @@ export default FunReducer = (state = {
         }
         case 'sign_up_info' : {
             state['Fun_sign_up'][action.key] = action.value
+            let key_param = action.key
+            let value_param = action.value
             return {
-                ...state
+                ...state,
+                Fun_sign_up : {...state.Fun_sign_up}
             }
         }
         case 'Refresh' : {

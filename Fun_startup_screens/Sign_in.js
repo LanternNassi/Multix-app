@@ -37,7 +37,7 @@ export function Sign_in(props){
                     textStyle={styles.spinnerTextStyle}
                 />
                     <Fumi
-                        style = {{ width : ScreenWidth-10 }}
+                        style = {{ width : ScreenWidth-10 , backgroundColor : '#121212' }}
                         label={'Username / Name'}
                         iconClass={FontAwesomeIcon}
                         iconName={'user'}
@@ -46,14 +46,14 @@ export function Sign_in(props){
                         value = {Name}
                         iconWidth={40}
                         inputPadding={16}
-                        inputStyle = {{ color : 'black' }}
+                        inputStyle = {{ color : 'white' }}
                         onChangeText = { text => {
                             setName(text.trim())
                         } }
                        
                     />
                       <Fumi
-                        style = {{ width : ScreenWidth-10 }}
+                        style = {{ width : ScreenWidth-10 , backgroundColor : '#121212'}}
                         label={'Password'}
                         iconClass={FontAwesomeIcon}
                         iconName={'eye-slash'}
@@ -62,7 +62,7 @@ export function Sign_in(props){
                         secureTextEntry = {true}
                         iconWidth={40}
                         inputPadding={16}
-                        inputStyle = {{ color : 'black' }}
+                        inputStyle = {{ color : 'white' }}
                         onChangeText = { text => {
                             setPassword(text)
                         } }
@@ -118,7 +118,7 @@ export function Sign_in(props){
                                SignInLogic.init(Name , Password , props.state.business.Debug , navigate , invalid , are_contacts_allowed)
                             }
                         } style = {{ width : 180 , height : 42 , borderRadius :21  , backgroundColor : props.state.fun.Layout_Settings.Icons_Color, justifyContent : 'center' , alignItems : 'center'  }}>
-                            <Text style = {{color : 'white'}}>Sign in </Text>
+                            <Text style = {{color : 'black'}}>Sign in </Text>
                         </TouchableOpacity>
 
     
@@ -152,7 +152,7 @@ export default connect(mapStateToProps, mapDispatchToProps)(Sign_in)
 const styles = StyleSheet.create({
     container : {
         flex : 1,
-        
+        backgroundColor : 'black'
     },
     header : {
         height : 0.15 * ScreenHeight,
@@ -164,6 +164,7 @@ const styles = StyleSheet.create({
     Header_text : {
         fontSize : 16,
         fontWeight : 'bold',
+        color : 'white'
     },
     input_container : {
         height : 0.8 * ScreenHeight,

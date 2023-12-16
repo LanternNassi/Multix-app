@@ -404,6 +404,7 @@ export function MyTabs(props) {
     }}>
       <Tab.Screen  name="fun" component={Fun}
       options={{
+        
         headerShown : false,
         tabBarIcon : ({ color, size}) => (
           <animatable.Text animation = {fun_anime} iterationCount={7} direction="alternate">

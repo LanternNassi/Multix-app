@@ -4,7 +4,7 @@ import {View , Text , TextInput , Image , Button, StyleSheet , TouchableOpacity,
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons'
 import * as animatable from 'react-native-animatable';
 import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs';
-import { ScreenWidth } from 'react-native-elements/dist/helpers';
+import { ScreenWidth , ScreenHeight } from 'react-native-elements/dist/helpers';
 import Theme from './Theme.js';
 import {connect} from 'react-redux';
 import * as Sharing from 'expo-sharing'
@@ -21,7 +21,9 @@ export function Header_business(props){
         <View style = {{...styles.container , backgroundColor : props.fun.Layout_Settings.Header_color }}>
                 <View style = {styles.header}>
                     <View style = {{flex : 2}}>
-                        <Text style = {{ fontSize : 29, marginLeft : 8, fontWeight : '800' }} >MULTIX</Text>
+                        {/* <Text style = {{ fontSize : 29, color : 'white', marginLeft : 8, fontWeight : '800' }} >MULTIX</Text> */}
+                        <Image source={require('../assets/Multix1.png')} style = {{height : 0.08*ScreenHeight , width : 0.5*ScreenWidth}}/>
+
                     </View>
                     <View style = {{ flexDirection : 'row' , justifyContent : 'space-around' , alignItems : 'center' , flex:1.5 }}>
                         <TouchableOpacity onPress = {async ()=>{
@@ -48,7 +50,12 @@ export function Header_business(props){
                                 }
                             }
                         }} >
-                        <Avatar containerStyle = {{elevation : 4 , backgroundColor : props.fun.Layout_Settings.Icons_surroundings}} rounded size = 'small' icon = {{ name : 'share-alt' , color : props.fun.Layout_Settings.Icons_Color, type : 'font-awesome'  }} />
+                        <Avatar containerStyle = {{elevation : 4 , backgroundColor : props.fun.Layout_Settings.Icons_Color}} rounded size = 'small' icon = {{ name : 'share-alt' , color : props.fun.Layout_Settings.Icons_surroundings, type : 'font-awesome'  }} />
+                        </TouchableOpacity>
+                        <TouchableOpacity onPress = {async ()=>{
+                            props.state.navigation.navigation.navigate('Orders')
+                        }} >
+                        <Avatar containerStyle = {{elevation : 4 , backgroundColor : props.fun.Layout_Settings.Icons_Color}} rounded size = 'small' icon = {{ name : 'shopping-cart' , color : props.fun.Layout_Settings.Icons_surroundings, type : 'font-awesome'  }} />
                         </TouchableOpacity>
                         <TouchableOpacity style = {{...styles.pic , backgroundColor : props.fun.Connected ? ('green'):('gold')}} onPress = {
                             () =>{
@@ -85,7 +92,7 @@ const styles = StyleSheet.create({
         height : 80,
         width : '100%',
         top : 0,
-        elevation : 0,
+        elevation : 0.7,
         
         
     } ,

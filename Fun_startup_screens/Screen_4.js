@@ -127,7 +127,7 @@ export const Fun_4 = (props) => {
                                 }
                         }
                     } style = {{ width : 180 , height : 42 , borderRadius :21  , backgroundColor : props.state.fun.Layout_Settings.Icons_Color, justifyContent : 'center' , alignItems : 'center'  }}>
-                        <Text style = {{color : 'white'}}>Sign up</Text>
+                        <Text style = {{color : 'black'}}>Sign up</Text>
                     </TouchableOpacity>
 
                 </View>
@@ -161,21 +161,22 @@ export default connect(mapStateToProps, mapDispatchToProps)(Fun_4)
 const styles = StyleSheet.create({
     container : {
         flex : 1,
-        
+        backgroundColor : '#121212'
     },
     spinnerTextStyle: {
         color: '#FFF'
       },
     header : {
-        height : 0.2 * ScreenHeight,
+        height : 0.3 * ScreenHeight,
         width : 0.9 * ScreenWidth,
-        justifyContent : 'space-around',
+        justifyContent : 'space-evenly',
         alignItems : 'center',
         flexWrap : 'nowrap'
     },
     Header_text : {
         fontSize : 14,
         fontWeight : 'bold',
+        color : 'white',
     },
     input_container : {
         height : 0.76 * ScreenHeight,

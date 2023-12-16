@@ -16,7 +16,8 @@ export function Header(props){
         <View style = {{...styles.container , backgroundColor : props.state.fun.Layout_Settings.Header_color}}>
                 <View style = {styles.header}>
                     <View style = {{flex : 2}}>
-                        <Text style = {{ fontSize : 29, marginLeft : 8, fontWeight : '800' }} >MULTIX</Text>
+                        {/* <Text style = {{ fontSize : 29, color : 'white' ,marginLeft : 8, fontWeight : '800' }} >MULTIX</Text> */}
+                        <Image source={require('../assets/Multix1.png')} style = {{height : 0.08*ScreenHeight , width : 0.5*ScreenWidth}}/>
                     </View>
                     <View style = {{ flexDirection : 'row' , justifyContent : 'space-around' , alignItems : 'center' , flex:1.5 }}>
                         <TouchableOpacity onPress = {
@@ -80,7 +81,7 @@ const styles = StyleSheet.create({
         height : 70,
         width : '100%',
         top : 0,
-        elevation : 5,
+        elevation : 0.6,
         
         
     } ,

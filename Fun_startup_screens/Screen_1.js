@@ -75,7 +75,7 @@ export const Fun_1 = (props) => {
                 }
               
                 <Fumi
-                    style = {{ width : ScreenWidth-10 }}
+                    style = {{ width : ScreenWidth-10 , backgroundColor : '#121212' }}
                     label={'Name'}
                     iconClass={FontAwesomeIcon}
                     iconName={'user'}
@@ -84,7 +84,7 @@ export const Fun_1 = (props) => {
                     iconSize={20}
                     iconWidth={40}
                     inputPadding={16}
-                    inputStyle = {{ color : 'black' }}
+                    inputStyle = {{ color : 'white' }}
                     onChangeText = { text => {
                         SetName(text)
                     } }
@@ -105,7 +105,7 @@ export const Fun_1 = (props) => {
                 }
               
                     <Fumi
-                    style = {{ width : ScreenWidth-10 }}
+                    style = {{ width : ScreenWidth-10 , backgroundColor : '#121212' }}
                     label={'Contact'}
                     iconClass={FontAwesomeIcon}
                     iconName={'phone'}
@@ -113,7 +113,7 @@ export const Fun_1 = (props) => {
                     iconSize={20}
                     iconWidth={40}
                     inputPadding={16}
-                    inputStyle = {{ color : 'black' }}
+                    inputStyle = {{ color : 'white' }}
                     onChangeText = { text => {
                         SetContact(text)
                     } }
@@ -125,8 +125,8 @@ export const Fun_1 = (props) => {
                 />
                 <View/>
                 <Fumi
-                    style = {{ width : ScreenWidth-10 }}
-                    label={'Password'}
+                    style = {{ width : ScreenWidth-10 , backgroundColor : '#121212'}}
+                    label={'Set Password'}
                     iconClass={FontAwesomeIcon}
                     iconName={'eye-slash'}
                     iconColor={props.state.fun.Layout_Settings.Icons_Color}
@@ -134,7 +134,7 @@ export const Fun_1 = (props) => {
                     secureTextEntry = {false}
                     iconWidth={40}
                     inputPadding={16}
-                    inputStyle = {{ color : 'black' }}
+                    inputStyle = {{ color : 'white' }}
                     onChangeText = { text => {
                         SetPassword(text)
                     } }
@@ -150,7 +150,7 @@ export const Fun_1 = (props) => {
                                     props.store_Name(Name)
                                     props.store_Contact(Contact)
                                     props.store_Password(Password)
-                                    props.state.business.navigation.navigation.navigate('Email')
+                                    props.state.business.navigation.navigation.navigate('Profile picture')
                                 }
                             } else {
                                 alert('Please validate the suggested queries to proceed with the sign up')
@@ -158,7 +158,7 @@ export const Fun_1 = (props) => {
                            
                         }
                     } style = {{ width : 180 , height : 42 , borderRadius :21  , backgroundColor : props.state.fun.Layout_Settings.Icons_Color, justifyContent : 'center' , alignItems : 'center'  }}>
-                        <Text style = {{color : 'white'}}>Continue with signup</Text>
+                        <Text style = {{color : 'black'}}>Continue with signup</Text>
                     </TouchableOpacity>
 
                   
@@ -206,7 +206,7 @@ export default connect(mapStateToProps, mapDispatchToProps)(Fun_1)
 const styles = StyleSheet.create({
     container : {
         flex : 1,
-       
+        backgroundColor : 'black',
     },
     header : {
         height : 0.16 * ScreenHeight,
@@ -219,6 +219,7 @@ const styles = StyleSheet.create({
     Header_text : {
         fontSize : 14,
         fontWeight : 'bold',
+        color : 'white'
     },
     input_container : {
         height : 0.87 * ScreenHeight,

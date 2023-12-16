@@ -359,12 +359,12 @@ export class tools extends Component {
         console.log(status)
         if (status === "granted"){
             await this.get_Audio_Files();
-            await this.get_Video_Files();
+            // await this.get_Video_Files();
          } else {
             const {status} = await MediaLibrary.requestPermissionsAsync();
             if (status === "granted"){
                 await this.get_Audio_Files()
-               await this.get_Video_Files();
+            //    await this.get_Video_Files();
             }
         } 
         // await TrackPlayer.setupPlayer()
@@ -440,7 +440,6 @@ export class tools extends Component {
     render(){
         return (
             <View style = {styles.container} >
-                <StatusBar style="dark" animated = {true}/>
                 <View style = {styles.header}>
                     <View style = {styles.O_V} >
 
@@ -498,9 +497,9 @@ export class tools extends Component {
                         </TouchableOpacity>
                     </View>
                 </View>
-                <View style = {{ height : 200 , width : ScreenWidth , justifyContent : 'center' , alignItems : 'center' ,  }}>
+                <View style = {{ backgroundColor : '#121212' ,height : 0.32*ScreenHeight , width : ScreenWidth , justifyContent : 'center' , alignItems : 'center' ,  }}>
                         { this.state.type_playing === 'audio' ? (
-                            <View style = {{ height : 200 , width : 200 , zIndex : 0, borderRadius : 100 , backgroundColor : 'white', elevation:20, justifyContent : 'center' , alignItems : 'center' ,   }}>
+                            <View style = {{ height : 200 , width : 200 , zIndex : 0, borderRadius : 100 , backgroundColor : '#121212', elevation:50, justifyContent : 'center' , alignItems : 'center' ,   }}>
                             <Image source = {require('../assets/Notifications.png')} style = {{  height : 189 , width : 189 , borderRadius : 94.5 }} />
                             </View>
                         ) : (
@@ -532,7 +531,7 @@ export class tools extends Component {
                         ) }
                         
                 </View> 
-                <View style = {{ width : ScreenWidth ,  height : 0.15 * ScreenHeight  , marginTop : 20 , flexDirection : 'row', justifyContent : 'space-evenly', alignItems : 'center'  }}>
+                <View style = {{ backgroundColor : '#121212', width : ScreenWidth ,  height : 0.15 * ScreenHeight  , marginTop : 20 , flexDirection : 'row', justifyContent : 'space-evenly', alignItems : 'center'  }}>
                     <TouchableOpacity style = {styles.encloser_2} onPress = {
                         async ()=>{
                             if(this.state.looping){
@@ -553,7 +552,7 @@ export class tools extends Component {
                     </TouchableOpacity>
                     <View>
                         <Text style = {styles.header_title}> {this.state.current_audio_song}... </Text>
-                        <Text style = {{ fontSize : 15 , fontWeight : '900' }} > Audio </Text>
+                        <Text style = {{ fontSize : 15 , fontWeight : '900' ,  color : 'white' }} > Audio </Text>
 
                     </View>
                     <TouchableOpacity style = {styles.encloser_2} onPress = {
@@ -565,8 +564,8 @@ export class tools extends Component {
                     <Avatar containerStyle = {{ backgroundColor : this.props.fun.Layout_Settings.Icons_surroundings, elevation : 10 }} rounded icon = {{ name : 'random' , type : 'font-awesome' , color : this.props.fun.Layout_Settings.Icons_Color }} size = {'medium'} />
                     </TouchableOpacity>
                 </View>
-                <View style = {{ marginTop : 20 , width : 0.99 * ScreenWidth  , height : 30 , flexDirection : 'row' , justifyContent : 'space-evenly' , alignItems : 'center'}}>
-                    <Text style = {{ fontSize : 15 , fontWeight : '700' }}> {this.millistoMinutesAndSeconds(this.state.current_time)} </Text>
+                <View style = {{ backgroundColor : '#121212', marginTop : 20 , width : 0.99 * ScreenWidth  , height : 30 , flexDirection : 'row' , justifyContent : 'space-evenly' , alignItems : 'center'}}>
+                    <Text style = {{ color :'white', fontSize : 15 , fontWeight : '700' }}> {this.millistoMinutesAndSeconds(this.state.current_time)} </Text>
                     <Slider maximumValue = {this.state.current_max_time*1000}
                     disabled = {false}
                     onValueChange = {(seconds)=>{
@@ -576,12 +575,12 @@ export class tools extends Component {
                     style = {{ width : 0.8 * ScreenWidth }} 
                     minimumValue = {0}
                     value = {this.state.current_time}
-                     maximumTrackTintColor = {'red'} 
+                     maximumTrackTintColor = {'white'} 
                      minimumTrackTintColor = { this.props.fun.Layout_Settings.Icons_Color}  />
-                     <Text style = {{ fontSize : 15 , fontWeight : '700'  }} >{this.seconds(this.state.current_max_time)} </Text>
+                     <Text style = {{ color : 'white', fontSize : 15 , fontWeight : '700'  }} >{this.seconds(this.state.current_max_time)} </Text>
 
                 </View>
-                <View style = {{ height : 0.2 * ScreenHeight, width : ScreenWidth , flexDirection : 'row' , justifyContent : 'space-around', alignItems : 'center'  }}>
+                <View style = {{ backgroundColor : '#121212', height : 0.2 * ScreenHeight, width : ScreenWidth , flexDirection : 'row' , justifyContent : 'space-around', alignItems : 'center'  }}>
                     <TouchableOpacity style = {styles.encloser_2} onPress = {
                         async ()=>{
                             const id = this.state.current_song_id
@@ -844,21 +843,23 @@ export default connect(mapStateToProps, mapDispatchToProps)(tools)
 const styles = StyleSheet.create({
     container : {
         flex : 1,
+        backgroundColor : '#121212'
     },
     header : {
         marginTop : 20,
         flexDirection : 'row',
         justifyContent : 'space-around',
         alignItems : 'center',
-        height : 0.09 * ScreenHeight,
+        height : 0.11 * ScreenHeight,
         width : ScreenWidth,
+        backgroundColor : '#121212'
     },
     T_O : {
         height : 60 ,
          width : 60 ,
           borderRadius : 30 , 
           justifyContent :'center',
-           backgroundColor : 'white',
+           backgroundColor : 'black',
             alignItems : 'center' , 
         elevation : 20
 
@@ -870,12 +871,13 @@ const styles = StyleSheet.create({
           elevation : 20 , 
           justifyContent : 'center', 
           alignItems : 'center',
-          backgroundColor : 'white'
+          backgroundColor : 'black'
 
     },
     header_title : {
         fontSize : 20,
-        fontWeight : '700'
+        fontWeight : '700',
+        color : 'white'
     },
     list_item : {
         flexDirection : 'row',
@@ -890,7 +892,7 @@ const styles = StyleSheet.create({
         height : 0.165 * ScreenWidth,
         justifyContent : 'center',
         alignItems : 'center',
-        backgroundColor : 'white',
+        backgroundColor : 'black',
         borderRadius : 0.5 * (0.165 * ScreenWidth),
         elevation : 20
     },
@@ -899,7 +901,7 @@ const styles = StyleSheet.create({
         height : 0.24 * ScreenWidth,
         justifyContent : 'center',
         alignItems : 'center',
-        backgroundColor : 'white',
+        backgroundColor : 'black',
         borderRadius : 0.5 * (0.24 * ScreenWidth),
         elevation : 20
     }

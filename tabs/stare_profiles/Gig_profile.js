@@ -156,7 +156,7 @@ export class GigProfile extends Component{
                                     width : 0.55 * ScreenWidth,
                                 }}>
                                 <View style = {{ ...styles.contacts , borderWidth : 0  }}>
-                                    <Text style = {{ fontWeight : '700' }}> Salary: </Text>
+                                    <Text style = {{ fontWeight : '700' }}> Salary : </Text>
                                 <NumberFormat value = { this.state.gig.Gig_salary } displayType = {'text'}
                                     thousandSeparator = {true}
                                     prefix = {'shs.'}
@@ -168,7 +168,7 @@ export class GigProfile extends Component{
                             
                                 </View>
                                 <View style = {{
-                                    width : 0.43 * ScreenWidth,
+                                    width : 0.5 * ScreenWidth,
                                     height : 20,
                                     flexDirection : 'row',
                                     justifyContent : 'space-around',
@@ -484,7 +484,6 @@ const styles = StyleSheet.create({
         paddingBottom : 6,
         paddingLeft : 10,
         paddingRight : 10,
-        paddingTop : 6,
         backgroundColor : 'rgba(0,40,0,0.1)',
         borderRadius : 20,
         top : 0.038 * ScreenWidth,

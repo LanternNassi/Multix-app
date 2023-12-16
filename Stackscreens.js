@@ -27,6 +27,7 @@ import Screen_5_Pic from './business_startup_screens/Screen_5_Pic.js';
 import Screen_6_Preferences from './business_startup_screens/Screen_6_Preferences.js'
 //Business screens
 import Business_account from './tabs/Business_account.js'
+import Orders from './tabs/business_tabs/Orders';
 //Gig startup screens
 import Credentials from './Gig_startup_screens/Screen_1'
 import Extra_info from './Gig_startup_screens/Screen_2'
@@ -37,6 +38,9 @@ import Gig_account from './tabs/Gig_account.js'
 import { ScreenWidth } from 'react-native-elements/dist/helpers';
 import Account_profile from './tabs/stare_profiles/Account_profile.js';
 import GigProfile from './tabs/stare_profiles/Gig_profile.js';
+import ProductInfo from './tabs/business_tabs/ProductInfo/ProductInfo';
+
+import HireInfo from './tabs/business_tabs/HireInfo/HireInfo';
 
 import Selling from './components/Front_actions/Selling.js'
 
@@ -70,7 +74,10 @@ function Stackscreens(props) {
      
      <NavigationContainer>
        <Stack.Navigator initialRouteName = "Welcome" detachInactiveScreens = {true} >
-         {
+        <Stack.Group 
+            screenOptions={{ headerStyle: { backgroundColor: '#121212' } }}
+        >
+        {
            !props.fun.app_started ? (
             <Stack.Screen name = "Welcome" component = {App} options={{headerShown :false}}/>
            ) : (
@@ -118,7 +125,7 @@ function Stackscreens(props) {
                  
 
                   }}>
-                <Avatar containerStyle = {{backgroundColor : props.fun.Layout_Settings.Icons_surroundings}} rounded icon = {{ name :'arrow-left',color : props.fun.Layout_Settings.Icons_Color,type:'font-awesome'  }} size = {"small"} />
+                <Avatar containerStyle = {{backgroundColor : '#121212'}} rounded icon = {{ name :'arrow-left',color : props.fun.Layout_Settings.Icons_Color,type:'font-awesome'  }} size = {"small"} />
                 {props.fun.current_chat.Profile_photo ? (
                   (props.fun.Online_chats[props.fun.current_chat.Name])? (
                     <View>
@@ -229,6 +236,10 @@ function Stackscreens(props) {
           <Stack.Screen name = 'Credentials' component = {Credentials} options = {{ headerShown : true }}/>
           <Stack.Screen name = 'Extra Information' component = {Extra_info} options = {{ headerShown : true }}/>
           <Stack.Screen name = 'Show Case' component = {Show_case} options = {{ headerShown : true }}/>
+          <Stack.Screen name = "Orders" component = {Orders} options = {{
+            headerShown : true,
+            headerTintColor : 'white'
+            }}/>
           <Stack.Screen name = 'Category' component = {Category} options = {{ headerShown : true }}/>
           {
             //Gig Profile Screen
@@ -251,6 +262,7 @@ function Stackscreens(props) {
 
            <Stack.Screen name = 'Account Profile' component = {Account_profile} options = {{ headerShown : true }}/>
            <Stack.Screen name = 'Gig Profile' component = {GigProfile} options = {{ headerShown : true }}/>
+           <Stack.Screen name = 'Job Info' component = {HireInfo} options = {{headerShown : false}} />
            <Stack.Screen name = {'information'} component = {Selling} options = {{ headerShown : true }}/>
 
           {
@@ -258,12 +270,12 @@ function Stackscreens(props) {
           }
           {
             !props.fun.app_started ? (
-              <Stack.Screen name = 'Personal info' component = {Fun_1} options = {{ headerShown : true }}/>
+              <Stack.Screen name = 'Personal info' component = {Fun_1} options = {{ headerShown : true , headerTintColor : 'white'}}/>
             ) : (console.log())
           }
           {
             !props.fun.app_started ? (
-              <Stack.Screen name = "Reset Password" component = {Forgot_password} options = {{ headerShown : true }} />
+              <Stack.Screen name = "Reset Password" component = {Forgot_password} options = {{ headerShown : true ,headerTintColor : 'white' }} />
             ) : (console.log())
           }
           {
@@ -278,28 +290,28 @@ function Stackscreens(props) {
           }
           {
             !props.fun.app_started ? (
-              <Stack.Screen name = 'Profile picture' component = {Fun_4} options = {{ headerShown : true }}/>
+              <Stack.Screen name = 'Profile picture' component = {Fun_4} options = {{ headerShown : true ,headerTintColor : 'white' }}/>
             ) : (console.log())
           }
             {
               !props.fun.app_started ? (
-                <Stack.Screen name = 'Sign in' component = {Sign_in} options = {{ headerShown : true}} />
+                <Stack.Screen name = 'Sign in' component = {Sign_in} options = {{ headerShown : true , headerTintColor : 'white'}} />
               ) : (console.log())
             }
             {
               !props.fun.app_started ? (
-                <Stack.Screen name = 'Terms And Conditions' component = {TermsAndConditions} options = {{ headerShown : true}}/>
+                <Stack.Screen name = 'Terms And Conditions' component = {TermsAndConditions} options = {{ headerShown : true , headerTintColor : 'white' }}/>
               ) : (console.log())
             }
              {
               !props.fun.app_started ? (
-                <Stack.Screen name = 'Welcome to Multix' component = {WelcomeFun} options = {{ headerShown : true }}/>
+                <Stack.Screen name = 'Welcome to Multix' component = {WelcomeFun} options = {{ headerShown : true , headerTintColor : 'white'  }}/>
               ) : (console.log())
             }
           {
             // Fun FAB screens
           }
-          <Stack.Screen name = 'Chats' component = {Chats_FAB} options = {{ headerShown : true }} />
+          <Stack.Screen name = 'Chats' component = {Chats_FAB} options = {{ headerShown : true , headerTintColor : 'white' }} />
           {
             // Settings Screens 
           }
@@ -309,12 +321,14 @@ function Stackscreens(props) {
           {
             // Full content screen
           }
+          <Stack.Screen name = 'Info' component = {ProductInfo} options = {{headerShown : false}} />
           <Stack.Screen name = 'Full View' component = {Full_media_view} options = {{ 
             headerShown : true,
             headerTintColor : 'black',
             headerBackgroundContainerStyle : {backgroundColor : 'black'},
              }}/>
-          
+        
+        </Stack.Group>  
        </Stack.Navigator>
        
      </NavigationContainer>

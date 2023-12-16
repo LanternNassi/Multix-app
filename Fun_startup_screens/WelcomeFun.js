@@ -28,7 +28,7 @@ export const WelcomeFun = (props) => {
                                     props.navigation.navigate('Sign in')
                                 }
                             } title = {'Log in'} titleStyle = {{ color : 'white' }} />
-                                
+                               
                 </View>
             </View>
         </View>

@@ -293,6 +293,7 @@ class Chats_screen extends Component {
     }
 
     _keyboardDidHide = async () =>{
+        Keyboard.dismiss()
         await Chat.sendMessage({
             'type' : 'Stop_Typing',
             'Receiver' : this.props.route.params['Server_id'],
@@ -400,7 +401,6 @@ class Chats_screen extends Component {
                             {
                                    (previous_date.slice(8,10) != item.item.Date.slice(8,10) ) ? (
                                        <View style = {{
-                                    
                                         //width : 0.3 * ScreenWidth,
                                         alignItems : 'center',
                                         justifyContent : 'center',
@@ -1146,7 +1146,7 @@ export default connect(mapStateToProps , mapDispatchToProps)(Chats_screen)
 const styles = StyleSheet.create({
     container : {
         display : "flex",
-        backgroundColor : 'transparent',
+        backgroundColor : '#121212',
         flex : 1,
         flexDirection : 'column',
         justifyContent : 'flex-end',
@@ -1179,12 +1179,13 @@ const styles = StyleSheet.create({
     input : {
         height : 40,
         width : 0.68 * ScreenWidth,
-        backgroundColor : Theme.lovely.icons,
+        backgroundColor : 'white',
         borderRadius : 20,
         elevation : 5,
         fontWeight : '700',
         fontSize : 16,
         paddingLeft : 20,
+        color : 'black',
         paddingRight : 20
     },
     dial : {
