@@ -14,7 +14,7 @@
           "mode": "production",
           "color": "#000000"
         }
-      ] ,
+      ],
       [
         "expo-media-library",
         {
@@ -23,7 +23,6 @@
           "isAccessMediaLocationEnabled": "true"
         }
       ]
-     
     ],
     "splash": {
       "image": "",
@@ -38,10 +37,19 @@
     ],
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "com.lantern.Multix"
+      "bundleIdentifier": "com.lantern.Multix",
+      "infoPlist": {
+        "NSPhotoLibraryUsageDescription": "Allow $(PRODUCT_NAME) to access your photos.",
+        "NSPhotoLibraryAddUsageDescription": "Allow $(PRODUCT_NAME) to save photos."
+      }
     },
     "android": {
-      "permissions": ["FOREGROUND_SERVICE"],
+      "permissions": [
+        "FOREGROUND_SERVICE",
+        "android.permission.READ_EXTERNAL_STORAGE",
+        "android.permission.WRITE_EXTERNAL_STORAGE",
+        "android.permission.ACCESS_MEDIA_LOCATION"
+      ],
       "adaptiveIcon": {
         "foregroundImage": "",
         "backgroundColor": "#0000000"
@@ -51,6 +59,11 @@
     },
     "web": {
       "favicon": "./assets/Notifications.png"
+    },
+    "extra": {
+      "eas": {
+        "projectId": "3a56fb58-9f2b-48e3-86d0-0af762f51251"
+      }
     }
   }
 }
